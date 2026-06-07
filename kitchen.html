@@ -44,10 +44,12 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .vbar-lbl{font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-right:4px;flex-shrink:0}
 
 /* BOARD - ORDER CARDS VIEW */
-.board{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px;-webkit-overflow-scrolling:touch;
-  display:grid;gap:12px;align-content:start;grid-template-columns:1fr}
-@media(min-width:600px){.board{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:900px){.board{grid-template-columns:repeat(3,1fr)}}
+.board{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px;-webkit-overflow-scrolling:touch;
+  display:grid;gap:12px;align-content:start;
+  grid-template-columns:1fr;
+  grid-auto-rows:170px}
+@media(min-width:600px){.board{grid-template-columns:repeat(2,1fr);grid-auto-rows:210px}}
+@media(min-width:900px){.board{grid-template-columns:repeat(3,1fr);grid-auto-rows:240px}}
 @media(min-width:1200px){.board{grid-template-columns:repeat(4,1fr)}}
 
 .card{background:var(--dark2);border:1px solid var(--b);border-radius:12px;overflow:hidden;animation:fadeUp .25s ease;transition:border-color .15s}
