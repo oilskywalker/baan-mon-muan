@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baan Mon Muan – Menu Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold-l:#E8C97A;--gold-d:#8B6914;
+  --black:#090700;--dark:#100F06;--dark2:#191508;--dark3:#221D09;
+  --text:#F0E8D0;--dim:#9A8A60;
+  --border:rgba(201,168,76,.2);--border2:rgba(201,168,76,.55);
+  --r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.topbar{flex-shrink:0;height:56px;background:var(--dark);border-bottom:2px solid var(--gold-d);display:flex;align-items:center;gap:10px;padding:0 14px;overflow-x:auto;scrollbar-width:none}
+.topbar::-webkit-scrollbar{display:none}
+.tb-logo{font-family:'Cinzel';font-size:clamp(12px,3vw,17px);font-weight:700;background:linear-gradient(135deg,var(--gold-l),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;flex-shrink:0}
+.tb-lbl{font-size:10px;color:var(--dim);letter-spacing:2px;white-space:nowrap;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;gap:8px;flex-shrink:0}
+.btn{border:none;border-radius:var(--r);font-family:'Sarabun';font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;transition:opacity .2s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;text-decoration:none}
+.btn:active{opacity:.8}
+.btn-gold{background:linear-gradient(135deg,var(--gold-d),var(--gold-l));color:var(--black)}
+.btn-outline{background:none;border:1px solid var(--border2);color:var(--gold)}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--dim)}
+.btn-danger{background:rgba(232,76,76,.1);border:1px solid rgba(232,76,76,.35);color:#E88080}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* ── LAYOUT ── */
+.layout{flex:1;display:flex;overflow:hidden;min-height:0}
+
+/* ── SIDEBAR ── */
+.sidebar{width:220px;flex-shrink:0;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .3s}
+/* Collapse sidebar on small screens */
+.sidebar.collapsed{width:50px}
+@media(max-width:700px){.sidebar{width:50px}}
+@media(max-width:700px){.sidebar .cat-label,.sidebar .cat-count,.sidebar .sb-head-txt,.sidebar .sb-add-btn span{display:none}}
+
+.sb-head{padding:12px 14px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-head-txt{font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+.sb-toggle{background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:2px 4px;display:none}
+@media(max-width:700px){.sb-toggle{display:block}}
+.cat-list{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 0}
+.cat-item{display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;min-width:0}
+.cat-item:hover{background:var(--dark2)}
+.cat-item.on{background:var(--dark2);border-left-color:var(--gold)}
+.cat-item:active{background:var(--dark3)}
+.cat-icon{font-size:18px;flex-shrink:0}
+.cat-label{flex:1;min-width:0}
+.cat-en{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-th{font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-count{font-family:'Cinzel';font-size:11px;color:var(--dim);background:var(--dark3);border-radius:4px;padding:1px 5px;flex-shrink:0}
+.sb-footer{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.sb-add-btn{width:100%;background:none;border:1px solid var(--border2);color:var(--gold);border-radius:var(--r);padding:8px 10px;cursor:pointer;font-family:'Sarabun';font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px;transition:background .15s}
+.sb-add-btn:hover{background:rgba(201,168,76,.1)}
+
+/* ── MAIN PANEL ── */
+.main-panel{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 16px 40px;-webkit-overflow-scrolling:touch}
+
+/* ── PANEL HEADER ── */
+.ph{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;flex-wrap:wrap;row-gap:10px}
+.ph-icon{font-size:28px;flex-shrink:0}
+.ph-info{flex:1;min-width:0}
+.ph-en{font-family:'Cinzel';font-size:clamp(16px,4vw,20px);color:var(--gold-l)}
+.ph-th{font-size:12px;color:var(--dim);margin-top:2px}
+.ph-note{font-size:11px;color:var(--dim);font-style:italic}
+.ph-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── CAT SETTINGS ── */
+.cat-settings{display:none;background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat-settings.hide{display:none!important}
+@media(min-width:600px){.cat-settings{grid-template-columns:repeat(3,1fr)}}
+
+/* ── FORM ELEMENTS ── */
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase}
+.fi,.fta{background:var(--dark3);border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;color:var(--text);font-family:'Sarabun';font-size:13px;outline:none;transition:border-color .15s;width:100%;-webkit-appearance:none}
+.fi:focus,.fta:focus{border-color:var(--gold)}
+.fta{resize:vertical;min-height:56px}
+
+/* ── RESPONSIVE ITEMS TABLE ── */
+/* On small screens: cards layout instead of table */
+.items-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);border:1px solid var(--border)}
+table.itbl{width:100%;border-collapse:collapse;background:var(--dark2);min-width:680px}
+table.itbl th{background:var(--dark3);padding:9px 12px;text-align:left;font-family:'Cinzel';font-size:10px;color:var(--dim);letter-spacing:1px;white-space:nowrap;border-bottom:1px solid var(--border)}
+table.itbl td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+table.itbl tr:last-child td{border:none}
+table.itbl tr:hover td{background:rgba(201,168,76,.03)}
+
+/* Mobile cards fallback */
+.item-cards{display:none;flex-direction:column;gap:8px}
+@media(max-width:600px){
+  .items-wrap{display:none}
+  .item-cards{display:flex}
+}
+.ic{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:10px}
+.ic-row1{display:flex;align-items:center;gap:10px}
+.ic-img-box{width:52px;height:52px;border-radius:6px;background:var(--dark3);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;flex-shrink:0;overflow:hidden}
+.ic-img-box img{width:100%;height:100%;object-fit:cover;border-radius:6px}
+.ic-names{flex:1;min-width:0}
+.ic-actions{display:flex;gap:6px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+
+/* Inline fields */
+.fi-inline{background:transparent;border:none;color:var(--text);font-family:'Sarabun';font-size:13px;width:100%;outline:none;padding:1px 0}
+.fi-inline:focus{background:var(--dark3);border-radius:4px;padding:2px 6px;border:1px solid var(--border2)}
+.fi-price{background:transparent;border:none;color:var(--gold);font-family:'Cinzel';font-size:14px;width:68px;outline:none}
+.fi-price:focus{background:var(--dark3);border-radius:4px;padding:2px 4px;border:1px solid var(--border2)}
+
+/* Image thumbnail in table */
+.img-box{width:44px;height:44px;border-radius:6px;background:var(--dark3);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;overflow:hidden;flex-shrink:0}
+.img-box img{width:100%;height:100%;object-fit:cover}
+.img-box:hover{border-color:var(--gold)}
+
+/* Toggle */
+.tog{width:36px;height:20px;border-radius:10px;background:var(--dark3);border:1px solid var(--border);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--gold-d);border-color:var(--gold)}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#555;transition:transform .2s,background .2s}
+.tog.on::after{transform:translateX(16px);background:var(--gold-l)}
+
+/* Star */
+.star{font-size:18px;cursor:pointer;line-height:1;user-select:none}
+.star.on{color:var(--gold)}
+.star.off{color:var(--dark3);filter:brightness(4)}
+
+/* ── ADD FORM ── */
+.add-form{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:12px;display:none}
+.add-form.on{display:block}
+.add-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+@media(min-width:600px){.add-grid.triple{grid-template-columns:1fr 1fr 1fr}}
+.add-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:var(--dark);border:1px solid var(--border2);border-radius:14px;padding:22px;width:100%;max-width:400px}
+.modal-title{font-family:'Cinzel';font-size:15px;color:var(--gold-l);margin-bottom:14px;letter-spacing:1px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--dark3);border:1px solid var(--border2);color:var(--gold-l);padding:10px 20px;border-radius:8px;font-size:13px;transition:transform .3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+/* ── PLACEHOLDER ── */
+.placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;color:var(--dim);gap:12px}
+.placeholder .icon{font-size:44px;opacity:.25}
+.placeholder .txt{font-family:'Cinzel';font-size:15px;letter-spacing:2px}
+
+/* ── SALES HISTORY ── */
+.sh-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.sh-bg.on{display:flex}
+.sh-modal{background:var(--dark);border:1px solid rgba(201,168,76,.55);border-radius:14px;padding:24px;width:100%;max-width:800px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;gap:16px}
+.sh-head{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sh-title{font-family:'Cinzel';font-size:17px;color:var(--gold-l);flex:1;letter-spacing:1px}
+.sh-close{background:none;border:1px solid rgba(201,168,76,.2);color:var(--dim);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sh-filter{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.sh-filt{background:none;border:1px solid rgba(201,168,76,.2);color:var(--dim);padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:all .15s;font-family:'Sarabun'}
+.sh-filt.on{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold-l)}
+.sh-stats{display:flex;gap:20px;background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:12px 16px;flex-wrap:wrap;flex-shrink:0}
+.sh-stat{display:flex;flex-direction:column;gap:3px}
+.sh-slbl{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.sh-sval{font-family:'Cinzel';font-size:18px;color:var(--gold-l)}
+.sh-body{flex:1;overflow-y:auto}
+.sh-row{background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.12);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.sh-rh{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(201,168,76,.06);border-bottom:1px solid rgba(201,168,76,.1);cursor:pointer;flex-wrap:wrap}
+.sh-rid{font-family:'Cinzel';font-size:12px;color:var(--gold)}
+.sh-rtbl{font-size:11px;color:var(--dim)}
+.sh-rtime{font-size:11px;color:var(--dim)}
+.sh-rtot{font-family:'Cinzel';font-size:14px;color:var(--gold-l);margin-left:auto}
+.sh-items{padding:8px 12px;display:none}
+.sh-items.on{display:block}
+.sh-item{display:flex;gap:8px;padding:3px 0;font-size:12px;border-bottom:1px solid rgba(201,168,76,.05)}
+.sh-item:last-child{border:none}
+.sh-iname{flex:1;color:var(--text)}
+.sh-iamount{font-family:'Cinzel';font-size:11px;color:var(--dim)}
+.sh-empty{text-align:center;padding:40px;color:var(--dim);font-size:14px}
+
+</style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div>
+    <div class="tb-logo">BAAN MON MUAN</div>
+    <div class="tb-lbl">MENU EDITOR</div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-gold btn-sm" onclick="saveAll()">💾 Save</button>
+    <button class="btn btn-outline btn-sm" onclick="exportJSON()">⬇ Export</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetDefault()">↺ Reset</button>
+    <a href="kitchen.html" class="btn btn-ghost btn-sm">🍳 Kitchen</a>
+    <a href="index.html" class="btn btn-ghost btn-sm">👁 Preview</a>
+
+    <button class="btn btn-outline btn-sm" onclick="openSalesHistory()">📊 Sales</button>  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <span class="sb-head-txt">Categories</span>
+      <button class="sb-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+    <div class="cat-list" id="catList"></div>
+    <div class="sb-footer">
+      <button class="sb-add-btn" onclick="openAddCat()">
+        <span>+</span><span> Add Category</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-panel" id="mainPanel">
+    <div class="placeholder">
+      <div class="icon">🍽️</div>
+      <div class="txt">Select a category</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Saved!</div>
+
+<!-- ADD CATEGORY MODAL -->
+<div class="modal-bg" id="addCatModal">
+  <div class="modal">
+    <div class="modal-title">Add New Category</div>
+    <div class="modal-grid">
+      <div class="fg"><div class="fl">English Name *</div><input class="fi" id="nc_en" placeholder="e.g. Pasta"></div>
+      <div class="fg"><div class="fl">Thai Name *</div><input class="fi" id="nc_th" placeholder="e.g. พาสต้า"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="fg"><div class="fl">Icon (emoji)</div><input class="fi" id="nc_icon" placeholder="🍝" maxlength="4"></div>
+      <div class="fg"><div class="fl">ID (no spaces)</div><input class="fi" id="nc_id" placeholder="pasta"></div>
+    </div>
+    <div class="fg" style="margin-top:8px"><div class="fl">Note (optional)</div><input class="fi" id="nc_note" placeholder="e.g. Serves 1–2 persons"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAddCat()">Cancel</button>
+      <button class="btn btn-gold" onclick="addCat()">Add Category</button>
+    </div>
+  </div>
+</div>
+
+<script src="menu-data.js"></script>
+<script>
+'use strict';
+let mdata=loadMenuData();
+let curCat=null;
+let sidebarCollapsed=window.innerWidth<=700;
+
+function toggleSidebar(){
+  sidebarCollapsed=!sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);
+}
+
+/* ── SIDEBAR ── */
+function buildSidebar(){
+  const el=document.getElementById('catList');
+  el.innerHTML='';
+  mdata.categories.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.className='cat-item'+(i===curCat?' on':'');
+    d.innerHTML=`<span class="cat-icon">${c.icon}</span>
+      <div class="cat-label"><div class="cat-en">${c.nameEn}</div><div class="cat-th">${c.nameTh}</div></div>
+      <span class="cat-count">${c.items.length}</span>`;
+    d.onclick=()=>selCat(i);
+    el.appendChild(d);
+  });
+}
+
+function selCat(i){
+  curCat=i;
+  buildSidebar();
+  renderPanel();
+  // On mobile, collapse sidebar after selection
+  if(window.innerWidth<=700){sidebarCollapsed=true;document.getElementById('sidebar').classList.add('collapsed');}
+}
+
+/* ── MAIN PANEL ── */
+function renderPanel(){
+  if(curCat===null) return;
+  const cat=mdata.categories[curCat];
+  const p=document.getElementById('mainPanel');
+
+  p.innerHTML=`
+    <div class="ph">
+      <span class="ph-icon">${cat.icon}</span>
+      <div class="ph-info">
+        <div class="ph-en">${cat.nameEn}</div>
+        <div class="ph-th">${cat.nameTh}</div>
+        ${cat.note?`<div class="ph-note">${cat.note}</div>`:''}
+      </div>
+      <div class="ph-actions">
+        <button class="btn btn-outline btn-sm" onclick="toggleCatSettings()">⚙ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="delCat(${curCat})">🗑 Delete</button>
+      </div>
+    </div>
+
+    <!-- Cat Settings -->
+    <div class="cat-settings hide" id="catSet">
+      <div class="fg"><div class="fl">English Name</div><input class="fi" value="${esc(cat.nameEn)}" oninput="updCat('nameEn',this.value)"></div>
+      <div class="fg"><div class="fl">Thai Name</div><input class="fi" value="${esc(cat.nameTh)}" oninput="updCat('nameTh',this.value)"></div>
+      <div class="fg"><div class="fl">Icon</div><input class="fi" value="${cat.icon}" maxlength="4" oninput="updCat('icon',this.value)"></div>
+      <div class="fg" style="grid-column:1/-1"><div class="fl">Note</div><input class="fi" value="${esc(cat.note||'')}" oninput="updCat('note',this.value)" placeholder="e.g. Serves 2–4 persons"></div>
+    </div>
+
+    <!-- Desktop table -->
+    <div class="items-wrap">
+      <table class="itbl">
+        <thead><tr>
+          <th>Image</th><th>Name EN</th><th>Name TH</th><th>Description</th>
+          <th>฿ Price</th><th style="text-align:center">★</th><th style="text-align:center">On?</th><th></th>
+        </tr></thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Mobile cards -->
+    <div class="item-cards" id="cardBody"></div>
+
+    <!-- Add btn -->
+    <button class="btn btn-outline" style="width:100%;margin-top:12px;justify-content:center" onclick="toggleAdd()">+ Add New Item</button>
+
+    <!-- Add form -->
+    <div class="add-form" id="addForm">
+      <div style="font-family:'Cinzel';font-size:12px;color:var(--gold-l);letter-spacing:1px;margin-bottom:12px">NEW ITEM</div>
+      <div class="add-grid triple">
+        <div class="fg"><div class="fl">English Name *</div><input class="fi" id="af_en" placeholder="e.g. Grilled Salmon"></div>
+        <div class="fg"><div class="fl">Thai Name *</div><input class="fi" id="af_th" placeholder="e.g. แซลม่อนย่าง"></div>
+        <div class="fg"><div class="fl">Price (฿) *</div><input class="fi" id="af_price" type="number" placeholder="180"></div>
+      </div>
+      <div class="add-grid">
+        <div class="fg"><div class="fl">Description</div><input class="fi" id="af_desc" placeholder="Optional details…"></div>
+        <div class="fg"><div class="fl">Image URL</div><input class="fi" id="af_img" placeholder="https://…"></div>
+      </div>
+      <div class="add-actions">
+        <button class="btn btn-ghost btn-sm" onclick="toggleAdd()">Cancel</button>
+        <button class="btn btn-gold btn-sm" onclick="addItem()">Add Item</button>
+      </div>
+    </div>`;
+
+  renderItems();
+}
+
+function renderItems(){
+  const cat=mdata.categories[curCat];
+
+  /* ── Desktop table body ── */
+  const tb=document.getElementById('tblBody');
+  if(tb){
+    tb.innerHTML='';
+    cat.items.forEach((it,i)=>{
+      const tr=document.createElement('tr');
+      if(!it.available) tr.style.opacity='.4';
+      tr.innerHTML=`
+        <td><div class="img-box" onclick="chImg(${i})" title="Click to change image">
+          ${it.image?`<img src="${esc(it.image)}" onerror="this.parentNode.innerHTML='📷'">`:'📷'}
+        </div></td>
+        <td><input class="fi-inline" value="${esc(it.name)}" onchange="updItem(${i},'name',this.value)" style="min-width:120px"></td>
+        <td><input class="fi-inline" value="${esc(it.nameTh)}" onchange="updItem(${i},'nameTh',this.value)" style="min-width:100px"></td>
+        <td><input class="fi-inline" value="${esc(it.desc||'')}" onchange="updItem(${i},'desc',this.value)" style="min-width:150px" placeholder="–"></td>
+        <td><input class="fi-price" type="number" value="${it.price}" onchange="updItem(${i},'price',Number(this.value))"></td>
+        <td style="text-align:center"><span class="star ${it.recommended?'on':'off'}" onclick="togItem(${i},'recommended')">★</span></td>
+        <td style="text-align:center"><div class="tog ${it.available?'on':''}" onclick="togItem(${i},'available')"></div></td>
+        <td><button class="btn btn-danger btn-sm" onclick="delItem(${i})">✕</button></td>`;
+      tb.appendChild(tr);
+    });
+  }
+
+  /* ── Mobile cards ── */
+  const cb=document.getElementById('cardBody');
+  if(cb){
+    cb.innerHTML='';
+    cat.items.forEach((it,i)=>{
+      const d=document.createElement('div');
+      d.className='ic';
+      if(!it.available) d.style.opacity='.45';
+      d.innerHTML=`
+        <div class="ic-row1">
+          <div class="ic-img-box" onclick="chImg(${i})">
+            ${it.image?`<img src="${esc(it.image)}" onerror="this.parentNode.innerHTML='📷'">`:'📷'}
+          </div>
+          <div class="ic-names" style="flex:1;min-width:0">
+            <div class="fl" style="margin-bottom:3px">English Name</div>
+            <input class="fi" value="${esc(it.name)}" onchange="updItem(${i},'name',this.value)" style="margin-bottom:6px">
+            <div class="fl" style="margin-bottom:3px">Thai Name</div>
+            <input class="fi" value="${esc(it.nameTh)}" onchange="updItem(${i},'nameTh',this.value)">
+          </div>
+        </div>
+        <div class="fg"><div class="fl">Description</div><input class="fi" value="${esc(it.desc||'')}" onchange="updItem(${i},'desc',this.value)" placeholder="–"></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div class="fg" style="flex:1;min-width:80px"><div class="fl">Price ฿</div><input class="fi" type="number" value="${it.price}" onchange="updItem(${i},'price',Number(this.value))"></div>
+          <div style="display:flex;gap:14px;align-items:center;margin-top:16px">
+            <div style="text-align:center"><div class="fl" style="margin-bottom:4px">★ Pick</div><span class="star ${it.recommended?'on':'off'}" onclick="togItem(${i},'recommended')">★</span></div>
+            <div style="text-align:center"><div class="fl" style="margin-bottom:4px">Available</div><div class="tog ${it.available?'on':''}" onclick="togItem(${i},'available')"></div></div>
+            <button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="delItem(${i})">✕ Remove</button>
+          </div>
+        </div>`;
+      cb.appendChild(d);
+    });
+  }
+}
+
+function toggleCatSettings(){
+  const el=document.getElementById('catSet');
+  el.classList.toggle('hide');
+}
+
+function esc(s){return String(s||'').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+function updCat(f,v){ mdata.categories[curCat][f]=v; buildSidebar(); autoSave(); }
+function updItem(i,f,v){ mdata.categories[curCat].items[i][f]=v; autoSave(); if(f==='available') renderItems(); }
+function togItem(i,f){ mdata.categories[curCat].items[i][f]=!mdata.categories[curCat].items[i][f]; autoSave(); renderItems(); }
+
+function chImg(i){
+  const cur=mdata.categories[curCat].items[i].image||'';
+  const url=prompt('Image URL (leave blank to remove):',cur);
+  if(url===null) return;
+  mdata.categories[curCat].items[i].image=url.trim();
+  autoSave(); renderItems();
+}
+
+function delItem(i){
+  if(!confirm('Delete this item?')) return;
+  mdata.categories[curCat].items.splice(i,1);
+  autoSave(); buildSidebar(); renderItems();
+  showToast('Item deleted');
+}
+
+function delCat(i){
+  if(!confirm(`Delete category "${mdata.categories[i].nameEn}" and all its items?`)) return;
+  mdata.categories.splice(i,1);
+  curCat=null; autoSave(); buildSidebar();
+  document.getElementById('mainPanel').innerHTML='<div class="placeholder"><div class="icon">🗑️</div><div class="txt">Category deleted</div></div>';
+  showToast('Category deleted');
+}
+
+function toggleAdd(){
+  const f=document.getElementById('addForm');
+  f.classList.toggle('on');
+  if(f.classList.contains('on')) document.getElementById('af_en').focus();
+}
+
+function addItem(){
+  const en=document.getElementById('af_en').value.trim();
+  const th=document.getElementById('af_th').value.trim();
+  const price=parseFloat(document.getElementById('af_price').value);
+  if(!en||!th||!price){showToast('Name (EN), Name (TH) and Price are required');return;}
+  mdata.categories[curCat].items.push({
+    id:mdata.categories[curCat].id+'_'+Date.now(),
+    name:en,nameTh:th,
+    desc:document.getElementById('af_desc').value.trim(),
+    price,
+    image:document.getElementById('af_img').value.trim(),
+    available:true,recommended:false
+  });
+  ['af_en','af_th','af_price','af_desc','af_img'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('addForm').classList.remove('on');
+  autoSave(); buildSidebar(); renderItems();
+  showToast('Item added!');
+}
+
+/* ADD CATEGORY */
+function openAddCat(){ document.getElementById('addCatModal').classList.add('on'); document.getElementById('nc_en').focus(); }
+function closeAddCat(){ document.getElementById('addCatModal').classList.remove('on'); }
+function addCat(){
+  const en=document.getElementById('nc_en').value.trim();
+  const th=document.getElementById('nc_th').value.trim();
+  if(!en||!th){alert('Name (EN) and Name (TH) are required');return;}
+  const icon=document.getElementById('nc_icon').value.trim()||'🍽️';
+  let id=(document.getElementById('nc_id').value.trim()||en.toLowerCase().replace(/\s+/g,'_')).replace(/[^a-z0-9_]/g,'');
+  if(mdata.categories.find(c=>c.id===id)) id+=Date.now();
+  const note=document.getElementById('nc_note').value.trim();
+  mdata.categories.push({id,name:`${en} / ${th}`,nameEn:en,nameTh:th,icon,note,items:[]});
+  closeAddCat();
+  ['nc_en','nc_th','nc_icon','nc_id','nc_note'].forEach(x=>document.getElementById(x).value='');
+  autoSave(); buildSidebar(); selCat(mdata.categories.length-1);
+  showToast('Category added!');
+}
+
+function autoSave(){ saveMenuData(mdata); }
+function saveAll(){ saveMenuData(mdata); showToast('✅ All changes saved!'); }
+
+function exportJSON(){
+  const b=new Blob([JSON.stringify(mdata,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);
+  a.download='baanmonmuan-menu.json';
+  a.click();
+  showToast('Exported JSON');
+}
+
+function resetDefault(){
+  if(!confirm('Reset to default menu? All edits will be lost.')) return;
+  saveMenuData(MENU_DATA); mdata=loadMenuData(); curCat=null;
+  buildSidebar();
+  document.getElementById('mainPanel').innerHTML='<div class="placeholder"><div class="icon">✅</div><div class="txt">Reset complete</div></div>';
+  showToast('Reset to default');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2500);
+}
+
+buildSidebar();
+
+/* ── SALES HISTORY ── */
+let shDay='today';
+// ── FIREBASE CONFIG (fill in your project values) ──
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDkyydLHfUmZukZsWVbZ343aeYIGk54XCg",
+  authDomain: "baan-mon-muan-f4ad5.firebaseapp.com",
+  databaseURL: "https://baan-mon-muan-f4ad5-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "baan-mon-muan-f4ad5",
+  storageBucket: "baan-mon-muan-f4ad5.appspot.com",
+  messagingSenderId: "731587450487",
+  appId: "1:731587450487:web:d47e30f298a95e5dd4d872"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const _db = firebase.database();
+
+let _salesCache = [];
+_db.ref('bmm_sales').on('value', snap => {
+  _salesCache = snap.val() ? Object.values(snap.val()) : [];
+});
+function loadSales(){ return _salesCache; }
+function openSalesHistory(){
+  renderSalesHistory();
+  document.getElementById('shBg').classList.add('on');
+}
+function closeSalesHistory(e){if(e.target===document.getElementById('shBg'))closeSalesHistoryBtn();}
+function closeSalesHistoryBtn(){document.getElementById('shBg').classList.remove('on');}
+function shSetDay(d,btn){
+  shDay=d;
+  document.querySelectorAll('.sh-filt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderSalesHistory();
+}
+function renderSalesHistory(){
+  const sales=loadSales();
+  const now=new Date();
+  const today=now.toDateString();
+  const weekAgo=new Date(now-7*86400000);
+  
+  const filtered=sales.filter(s=>{
+    const d=new Date(s.paidAt);
+    if(shDay==='today')return d.toDateString()===today;
+    if(shDay==='week')return d>=weekAgo;
+    return true;
+  }).sort((a,b)=>new Date(b.paidAt)-new Date(a.paidAt));
+  
+  const total=filtered.reduce((s,r)=>s+r.total,0);
+  const byTable={};filtered.forEach(r=>{byTable[r.table]=(byTable[r.table]||0)+r.total;});
+  const topTable=Object.entries(byTable).sort((a,b)=>b[1]-a[1])[0];
+  
+  document.getElementById('shStats').innerHTML=
+    '<div class="sh-stat"><div class="sh-slbl">Transactions</div><div class="sh-sval">'+filtered.length+'</div></div>'
+    +'<div class="sh-stat"><div class="sh-slbl">Revenue</div><div class="sh-sval">฿'+total.toLocaleString()+'</div></div>'
+    +(topTable?'<div class="sh-stat"><div class="sh-slbl">Top Table</div><div class="sh-sval">Table '+topTable[0]+'</div></div>':'');
+  
+  const body=document.getElementById('shBody');
+  if(!filtered.length){body.innerHTML='<div class="sh-empty">No sales records found</div>';return;}
+  body.innerHTML=filtered.map((s,i)=>{
+    const dt=new Date(s.paidAt);
+    const timeStr=dt.toLocaleDateString('th-TH',{day:'2-digit',month:'2-digit'})+' '+dt.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    return '<div class="sh-row">'
+      +'<div class="sh-rh" onclick="shToggle('+i+')">'
+      +'<span class="sh-rid">'+s.id+'</span>'
+      +'<span class="sh-rtbl">Table '+s.table+'</span>'
+      +'<span class="sh-rtime">'+timeStr+'</span>'
+      +'<span class="sh-rtot">฿'+s.total+'</span>'
+      +'</div>'
+      +'<div class="sh-items" id="shi_'+i+'">'
+      +(s.items||[]).map(it=>'<div class="sh-item"><span class="sh-iname">'+it.qty+'× '+it.name+'</span><span class="sh-iamount">฿'+it.price*it.qty+'</span></div>').join('')
+      +'</div></div>';
+  }).join('');
+}
+function shToggle(i){document.getElementById('shi_'+i)?.classList.toggle('on');}
+
+</script>
+
+<!-- SALES HISTORY MODAL -->
+<div class="sh-bg" id="shBg" onclick="closeSalesHistory(event)">
+  <div class="sh-modal">
+    <div class="sh-head">
+      <div class="sh-title">📊 Sales History</div>
+      <button class="sh-close" onclick="closeSalesHistoryBtn()">✕</button>
+    </div>
+    <div class="sh-filter" id="shFilter">
+      <button class="sh-filt on" data-d="today" onclick="shSetDay('today',this)">Today</button>
+      <button class="sh-filt" data-d="week" onclick="shSetDay('week',this)">This Week</button>
+      <button class="sh-filt" data-d="all" onclick="shSetDay('all',this)">All Time</button>
+    </div>
+    <div class="sh-stats" id="shStats"></div>
+    <div class="sh-body" id="shBody"></div>
+  </div>
+</div>
+
+</body>
+</html>
