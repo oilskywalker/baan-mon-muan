@@ -212,6 +212,18 @@ table.itbl tr:hover td{background:rgba(201,168,76,.03)}
 .stk-cat-divider{font-family:'Cinzel';font-size:10px;letter-spacing:2px;color:var(--gold);background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.18);border-radius:7px;padding:6px 12px;margin-top:4px;display:flex;align-items:center;gap:8px;flex-shrink:0}
 .stk-cat-divider:first-child{margin-top:0}
 
+.save-dlg-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;display:none;align-items:center;justify-content:center}
+.save-dlg-bg.on{display:flex}
+.save-dlg{background:var(--dark2);border:1px solid var(--border2);border-radius:16px;padding:32px 28px;max-width:340px;width:90%;text-align:center;animation:dlgIn .2s ease}
+@keyframes dlgIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+.save-dlg-icon{font-size:36px;margin-bottom:12px}
+.save-dlg-title{font-family:'Cinzel';font-size:18px;color:var(--gold-l);letter-spacing:1px;margin-bottom:8px}
+.save-dlg-msg{font-size:13px;color:var(--dim);margin-bottom:24px;line-height:1.5}
+.save-dlg-actions{display:flex;gap:12px;justify-content:center}
+.save-dlg-cancel{background:none;border:1px solid var(--border2);color:var(--dim);padding:10px 22px;border-radius:8px;font-family:'Sarabun';font-size:13px;cursor:pointer}
+.save-dlg-cancel:hover{border-color:var(--gold);color:var(--gold)}
+.save-dlg-ok{background:linear-gradient(135deg,var(--gold-d),var(--gold-l));color:#000;border:none;padding:10px 26px;border-radius:8px;font-family:'Cinzel';font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px}
+.save-dlg-ok:hover{opacity:.9}
 </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -524,7 +536,17 @@ function addCat(){
 }
 
 function autoSave(){ saveMenuData(mdata); }
-function saveAll(){ saveMenuData(mdata); showToast('✅ All changes saved!'); }
+function saveAll(){
+  document.getElementById('saveConfirmDlg').classList.add('on');
+}
+function confirmSave(){
+  saveMenuData(mdata);
+  document.getElementById('saveConfirmDlg').classList.remove('on');
+  showToast('✅ Saved! Menu updated successfully.');
+}
+function cancelSave(){
+  document.getElementById('saveConfirmDlg').classList.remove('on');
+}
 
 function exportJSON(){
   const b=new Blob([JSON.stringify(mdata,null,2)],{type:'application/json'});
@@ -746,5 +768,17 @@ function shToggle(i){document.getElementById('shi_'+i)?.classList.toggle('on');}
   </div>
 </div>
 
+<!-- SAVE CONFIRM DIALOG -->
+<div class="save-dlg-bg" id="saveConfirmDlg">
+  <div class="save-dlg">
+    <div class="save-dlg-icon">💾</div>
+    <div class="save-dlg-title">Save Changes?</div>
+    <div class="save-dlg-msg">This will update the live menu for all customers.</div>
+    <div class="save-dlg-actions">
+      <button class="save-dlg-cancel" onclick="cancelSave()">Cancel</button>
+      <button class="save-dlg-ok" onclick="confirmSave()">Yes, Save</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
