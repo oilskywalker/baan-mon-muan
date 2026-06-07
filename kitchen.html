@@ -193,11 +193,13 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 </div>
 
 <div class="stbar">
-  <button class="stab on" onclick="setF('all',this)">ALL <span class="sbadge" id="b_all">0</span></button>
+  <button class="stab on" onclick="setF('current',this)">⚡ CURRENT ORDER <span class="sbadge" id="b_current">0</span></button>
   <button class="stab" onclick="setF('pending',this)">🔴 NEW <span class="sbadge" id="b_pending">0</span></button>
   <button class="stab" onclick="setF('preparing',this)">🔵 PREPARING <span class="sbadge" id="b_preparing">0</span></button>
   <button class="stab" onclick="setF('ready',this)">🟢 READY <span class="sbadge" id="b_ready">0</span></button>
   <button class="stab" onclick="setF('served',this)">✅ SERVED <span class="sbadge" id="b_served">0</span></button>
+  <button class="stab" onclick="setF('paid',this)">💳 PAID <span class="sbadge" id="b_paid">0</span></button>
+  <button class="stab" onclick="setF('all',this)">ALL <span class="sbadge" id="b_all">0</span></button>
 </div>
 
 <div class="vbar">
@@ -237,7 +239,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 
 <script>
 'use strict';
-let filter='all';
+let filter='current';
 let prevIds=new Set();
 let bellOn=true;
 let lastPendingCount=0;
@@ -348,10 +350,11 @@ function render(){
   const today=new Date().toDateString();
   const tod=orders.filter(o=>new Date(o.time).toDateString()===today);
 
-  const cnt={all:0,pending:0,preparing:0,ready:0,served:0};
+  const cnt={all:0,current:0,pending:0,preparing:0,ready:0,served:0,paid:0};
   tod.forEach(o=>{
     cnt.all++;
     if(cnt[o.status]!==undefined)cnt[o.status]++;
+    if(o.status==='preparing'||o.status==='ready'||o.status==='served')cnt.current++;
   });
 
   if(cnt.pending>lastPendingCount)playBell();
@@ -378,13 +381,17 @@ function render(){
 
 function renderOrders(tod){
   const pri={pending:0,preparing:1,ready:2,served:3,paid:4};
-  const list=(filter==='all'?tod:tod.filter(o=>o.status===filter))
-    .sort((a,b)=>pri[a.status]-pri[b.status]||new Date(a.time)-new Date(b.time));
+  const list=(
+    filter==='all'?tod:
+    filter==='current'?tod.filter(o=>o.status==='preparing'||o.status==='ready'||o.status==='served'):
+    tod.filter(o=>o.status===filter)
+  ).sort((a,b)=>pri[a.status]-pri[b.status]||new Date(a.time)-new Date(b.time));
 
   const board=document.getElementById('board');
   board.innerHTML='';
   if(!list.length){
-    board.innerHTML='<div class="empty"><div class="empty-ico">🍽️</div><div class="empty-txt">'+(filter==='all'?'No orders today yet':'No '+filter+' orders')+'</div></div>';
+    const emptyMsg={all:'No orders today yet',current:'No active orders',paid:'No paid orders today'}[filter]||('No '+filter+' orders');
+    board.innerHTML='<div class="empty"><div class="empty-ico">🍽️</div><div class="empty-txt">'+emptyMsg+'</div></div>';
     return;
   }
 
