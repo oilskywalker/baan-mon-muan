@@ -208,6 +208,8 @@ table.itbl tr:hover td{background:rgba(201,168,76,.03)}
 .stk-card.oos .stk-card-btn:hover{background:rgba(232,76,76,.32)}
 .stk-card:not(.oos) .stk-card-btn{background:rgba(76,200,120,.12);color:#4EC878}
 .stk-card:not(.oos) .stk-card-btn:hover{background:rgba(76,200,120,.24)}
+.stk-cat-divider{grid-column:1/-1;font-family:'Cinzel';font-size:11px;letter-spacing:2px;color:var(--gold);background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:8px 14px;margin-top:6px;display:flex;align-items:center;gap:8px}
+.stk-cat-divider:first-child{margin-top:0}
 
 </style>
   <!-- Firebase SDK -->
@@ -602,7 +604,15 @@ function renderStockMgr(){
     ? mdata.categories
     : mdata.categories.filter(c=>c.id===_stkCatFilter);
   cats.forEach(cat=>{
-    cat.items.filter(i=>i.available).forEach(item=>{
+    const visible=cat.items.filter(i=>i.available);
+    if(!visible.length)return;
+    if(_stkCatFilter==='all'){
+      const div=document.createElement('div');
+      div.className='stk-cat-divider';
+      div.innerHTML=`<span>${cat.icon}</span><span>${cat.nameEn} / ${cat.nameTh}</span><span style="margin-left:auto;font-family:'Sarabun';font-size:10px;color:var(--dim);letter-spacing:0">${visible.length} items</span>`;
+      grid.appendChild(div);
+    }
+    visible.forEach(item=>{
       const isOOS=!!_outOfStock[item.id];
       if(isOOS) oosCnt++;
       const card=document.createElement('div');
