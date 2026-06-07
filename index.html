@@ -131,7 +131,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .suc-num{font-family:'Cinzel';font-size:clamp(36px,12vw,52px);color:var(--gold);border:2px solid var(--b2);border-radius:12px;padding:14px 36px;letter-spacing:4px;margin-bottom:28px}
 .suc-more{background:none;border:1px solid var(--b2);color:var(--gold);font-family:'Cinzel';font-size:12px;letter-spacing:2px;padding:12px 28px;border-radius:8px;cursor:pointer}
 
-/* ── MY ORDERS PANEL ── */
+/* MY ORDERS PANEL */
 .myord-btn{background:none;border:1px solid var(--b2);color:var(--gold);font-size:18px;width:38px;height:38px;border-radius:8px;cursor:pointer;position:relative;display:none;flex-shrink:0;align-items:center;justify-content:center}
 .myord-btn.vis{display:flex}
 .myord-dot{position:absolute;top:-3px;right:-3px;background:var(--gold);color:var(--black);font-size:9px;font-weight:700;border-radius:10px;padding:1px 4px;min-width:14px;text-align:center;display:none}
@@ -143,16 +143,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .myord-hdr-tbl{font-size:12px;color:var(--dim);background:rgba(201,168,76,.1);border:1px solid var(--b);border-radius:5px;padding:2px 10px}
 .myord-close{background:none;border:1px solid var(--b);color:var(--dim);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer}
 .myord-body{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch}
-.myord-card{background:var(--dark2);border:1px solid var(--b);border-radius:12px;margin-bottom:12px;overflow:hidden;animation:fadeUp .25s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.myord-card{background:var(--dark2);border:1px solid var(--b);border-radius:12px;margin-bottom:12px;overflow:hidden}
 .myord-ch{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--dark3);border-bottom:1px solid var(--b)}
 .myord-oid{font-family:'Cinzel';font-size:14px;color:var(--gold-l);font-weight:700}
 .myord-time{font-size:11px;color:var(--dim);margin-left:auto}
 .myord-spill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px;white-space:nowrap}
 .sp-pending{background:rgba(255,200,80,.12);color:#F5C842;border:1px solid rgba(255,200,80,.3)}
 .sp-preparing{background:rgba(76,168,232,.15);color:#4CA8E8;border:1px solid rgba(76,168,232,.35)}
-.sp-ready{background:rgba(76,232,168,.15);color:#4CE8A8;border:1px solid rgba(76,232,168,.35);animation:readyPulse 1.5s ease infinite}
-@keyframes readyPulse{0%,100%{box-shadow:0 0 0 0 rgba(76,232,168,.3)}50%{box-shadow:0 0 0 6px rgba(76,232,168,0)}}
+.sp-ready{background:rgba(76,232,168,.15);color:#4CE8A8;border:1px solid rgba(76,232,168,.35)}
 .sp-served{background:rgba(160,160,140,.1);color:#A0A08C;border:1px solid rgba(160,160,140,.25)}
 .myord-items{padding:10px 14px}
 .myord-item{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid rgba(201,168,76,.07)}
@@ -172,8 +170,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .myord-reset{background:linear-gradient(135deg,var(--gold-d),var(--gold-l));color:var(--black);border:none;border-radius:10px;font-family:'Cinzel';font-size:13px;font-weight:700;letter-spacing:1px;padding:14px 28px;cursor:pointer}
 .myord-actions{flex-shrink:0;padding:14px 16px;border-top:1px solid var(--b);display:flex;gap:10px}
 .myord-add{flex:1;background:linear-gradient(135deg,var(--gold-d),var(--gold-l));color:var(--black);border:none;border-radius:10px;font-family:'Cinzel';font-size:13px;font-weight:700;letter-spacing:1px;padding:14px;cursor:pointer}
-.myord-back{background:none;border:1px solid var(--b2);color:var(--gold);border-radius:10px;font-family:'Sarabun';font-size:13px;padding:14px 18px;cursor:pointer}
-.status-lbl{font-size:12px;color:var(--dim);text-align:center;padding:6px 0}
 
 /* ── DRINK MODAL ── */
 .dm-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:none;align-items:flex-end;justify-content:center;padding:0}
@@ -203,24 +199,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="logo-sub">Café · Restaurant · Chiang Mai</div>
   </div>
   <div id="tblBadge" class="tbl-badge">Table <b id="tblNum">–</b></div>
-  <button class="myord-btn" id="myordBtn" onclick="openMyOrders()" aria-label="My Orders" title="My Orders">📋<span class="myord-dot" id="myordDot"></span></button>
+  <button class="myord-btn" id="myordBtn" onclick="openMyOrders()" title="My Orders">📋<span class="myord-dot" id="myordDot"></span></button>
   <button class="cart-btn" onclick="openCart()" aria-label="View cart">🛒
     <div class="cdot" id="cdot">0</div>
   </button>
 </header>
-
-<!-- MY ORDERS PANEL -->
-<div class="myord" id="myordPanel">
-  <div class="myord-hdr">
-    <div class="myord-hdr-title">📋 My Orders</div>
-    <div class="myord-hdr-tbl" id="myordTblLbl">Table –</div>
-    <button class="myord-close" onclick="closeMyOrders()">✕</button>
-  </div>
-  <div class="myord-body" id="myordBody"></div>
-  <div class="myord-actions" id="myordActions">
-    <button class="myord-add" onclick="closeMyOrders()">＋ Add More Items · สั่งเพิ่ม</button>
-  </div>
-</div>
 
 <!-- TABLE SELECT -->
 <div id="tblScreen">
@@ -266,6 +249,19 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <button class="pbtn" id="pbtn" onclick="placeOrder()" disabled>PLACE ORDER · สั่งอาหาร</button>
 </div>
 
+
+<!-- MY ORDERS PANEL -->
+<div class="myord" id="myordPanel">
+  <div class="myord-hdr">
+    <div class="myord-hdr-title">📋 My Orders</div>
+    <div class="myord-hdr-tbl" id="myordTblLbl">Table –</div>
+    <button class="myord-close" onclick="closeMyOrders()">✕</button>
+  </div>
+  <div class="myord-body" id="myordBody"></div>
+  <div class="myord-actions" id="myordActions">
+    <button class="myord-add" onclick="closeMyOrders()">＋ Add More Items · สั่งเพิ่ม</button>
+  </div>
+</div>
 <!-- SUCCESS -->
 <div class="suc" id="suc">
   <div class="suc-ico">🎉</div>
@@ -990,4 +986,187 @@ function selTemp(btn,val){
 }
 function confirmDrink(){
   const sw=document.querySelector('.sw-btn.on')?.dataset.val||'100%';
-  const tp=document.querySelector('.tp-btn.
+  const tp=document.querySelector('.tp-btn.on')?.dataset.val||'Ice';
+  // Add with options - make unique key per drink+options combo
+  const key=drinkModalIid+'_'+tp+'_'+sw;
+  const cat=mdata.categories.find(c=>c.id===drinkModalCid);
+  const item=cat?.items.find(i=>i.id===drinkModalIid);
+  if(!item)return;
+  const noSweet=new Set(['cocktail','beer_wine','spirit']);
+  const noTemp=new Set(['cocktail','beer_wine','spirit']);
+  const hasSw=!noSweet.has(drinkModalCid);
+  const hasTp=!noTemp.has(drinkModalCid);
+  
+  if(!cart[key])cart[key]={
+    name:item.name,
+    nameTh:item.nameTh,
+    price:item.price,
+    qty:0,
+    catId:drinkModalCid,
+    itemId:drinkModalIid,
+    sweetness:hasSw?sw:null,
+    temp:hasTp?tp:null,
+    displayLabel:(hasTp?tp:'')+' '+(hasSw?sw:'')
+  };
+  cart[key].qty++;
+  closeDrinkModal();
+  renderQC(drinkModalCid,drinkModalIid,getDrinkItemQty(drinkModalIid));
+  updateUI();
+}
+
+function getDrinkItemQty(itemId){
+  return Object.entries(cart).filter(([k])=>k===itemId||k.startsWith(itemId+'_')).reduce((s,[,v])=>s+v.qty,0);
+}
+
+function chQty(catId,itemId,d){
+  const cat=mdata.categories.find(c=>c.id===catId);
+  const item=cat?.items.find(i=>i.id===itemId);
+  if(!item)return;
+  if(!cart[itemId])cart[itemId]={name:item.name,nameTh:item.nameTh,price:item.price,qty:0,catId};
+  cart[itemId].qty=Math.max(0,cart[itemId].qty+d);
+  if(cart[itemId].qty===0)delete cart[itemId];
+  renderQC(catId,itemId,cart[itemId]?.qty||0);
+  updateUI();
+}
+
+function updateUI(){
+  const vals=Object.values(cart);
+  const total=vals.reduce((s,i)=>s+i.price*i.qty,0);
+  const totalQty=vals.reduce((s,i)=>s+i.qty,0);
+  const dot=document.getElementById('cdot');
+  dot.textContent=totalQty;dot.className='cdot'+(totalQty>0?' on':'');
+  const bar=document.getElementById('botbar');
+  bar.className='botbar'+(totalQty>0?' on':'');
+  document.getElementById('botTxt').textContent='View Order ('+totalQty+' item'+(totalQty!==1?'s':'')+')'  ;
+  document.getElementById('botAmt').textContent='฿'+total;
+  const di=document.getElementById('ditems');
+  if(vals.length===0){
+    di.innerHTML='<div class="emptycart">🛒 No items yet<br><small>Tap ADD on any dish to start</small></div>';
+  } else {
+    di.innerHTML=vals.map(it=>{
+      const id=Object.keys(cart).find(k=>cart[k]===it)||'';
+      const label=it.displayLabel?' <small style="color:var(--dim)">'+it.displayLabel.trim()+'</small>':'';
+      return '<div class="ci"><div class="ci-info"><div class="ci-name">'+it.name+label+'</div><div class="ci-nameth">'+it.nameTh+'</div></div><div class="ci-qty">×'+it.qty+'</div><div class="ci-price">฿'+it.price*it.qty+'</div><button class="ci-del" onclick="removeCI(\''+id+'\')">✕</button></div>';
+    }).join('');
+  }
+  document.getElementById('dtotal').textContent='฿'+total;
+  document.getElementById('pbtn').disabled=totalQty===0||orderSubmitting;
+}
+
+function removeCI(id){
+  if(!cart[id])return;
+  const catId=cart[id].catId;
+  const itemId=cart[id].itemId||id;
+  delete cart[id];
+  if(isDrinkCat(catId)){
+    renderQC(catId,itemId,getDrinkItemQty(itemId));
+  } else {
+    renderQC(catId,id,0);
+  }
+  updateUI();
+}
+
+function openCart(){document.getElementById('overlay').classList.add('on');document.getElementById('drawer').classList.add('on');updateUI();}
+function closeCart(){document.getElementById('overlay').classList.remove('on');document.getElementById('drawer').classList.remove('on');}
+
+// ── PLACE ORDER with debounce protection ──
+function placeOrder(){
+  const vals=Object.values(cart);if(!vals.length)return;
+  if(orderSubmitting)return; // debounce — prevent double-submit
+  orderSubmitting=true;
+  document.getElementById('pbtn').disabled=true;
+  
+  const orders=loadOrders();
+  const now=new Date();
+  // Generate order ID as simple count number
+  const seq=orders.length+1;
+  const order={
+    id:'Order #'+seq,
+    table,
+    items:vals.map(i=>({...i})),
+    note:document.getElementById('nota').value.trim(),
+    total:vals.reduce((s,i)=>s+i.price*i.qty,0),
+    status:'pending',
+    time:now.toISOString(),
+    timeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})
+  };
+  orders.push(order);
+  saveOrders(orders);
+  document.getElementById('sucNum').textContent=order.id;
+  cart={};document.getElementById('nota').value='';
+  closeCart();buildMenu();
+  document.getElementById('suc').classList.add('on');
+  document.getElementById('myordBtn').classList.add('vis');
+  
+  // Reset debounce after delay
+  setTimeout(()=>{orderSubmitting=false;updateUI();},3000);
+  updateUI();
+}
+
+function addMore(){
+  document.getElementById('suc').classList.remove('on');
+  openMyOrders();
+}
+function openMyOrders(){
+  if(!table)return;
+  document.getElementById('myordTblLbl').textContent='Table '+table;
+  document.getElementById('myordPanel').classList.add('on');
+  renderMyOrders();
+}
+function closeMyOrders(){
+  document.getElementById('myordPanel').classList.remove('on');
+}
+function renderMyOrders(){
+  const btn=document.getElementById('myordBtn');
+  const dot=document.getElementById('myordDot');
+  if(!table){btn.classList.remove('vis');return;}
+  const orders=getTableOrders(table);
+  const body=document.getElementById('myordBody');
+  const actions=document.getElementById('myordActions');
+  btn.classList.toggle('vis',orders.length>0);
+  if(orders.length>0){dot.textContent=orders.length;dot.classList.add('vis');}
+  else{dot.classList.remove('vis');}
+  const panelOpen=document.getElementById('myordPanel').classList.contains('on');
+  if(!panelOpen)return;
+  if(orders.length===0){
+    body.innerHTML='<div class="myord-empty"><div class="myord-empty-ico">\u{1F64F}</div><div class="myord-empty-txt">Payment Confirmed!<br><span style="font-size:12px;letter-spacing:0;font-family:Sarabun;color:var(--dim)">Thank you · ขอบคุณ</span></div><button class="myord-reset" onclick="resetForNewGuest()">New Order · สั่งใหม่</button></div>';
+    actions.style.display='none';
+    return;
+  }
+  actions.style.display='flex';
+  const statusLabel={pending:'⏳ Order Received',preparing:'\u{1F373} Being Prepared',ready:'\u{1F514} Ready to Serve!',served:'✅ Served'};
+  const statusClass={pending:'sp-pending',preparing:'sp-preparing',ready:'sp-ready',served:'sp-served'};
+  const pri={ready:0,preparing:1,pending:2,served:3};
+  const sorted=[...orders].sort((a,b)=>(pri[a.status]??9)-(pri[b.status]??9)||new Date(a.time)-new Date(b.time));
+  body.innerHTML='';
+  sorted.forEach(o=>{
+    const active=o.items.filter(i=>!i.cancelled);
+    const total=active.reduce((s,i)=>s+i.price*i.qty,0);
+    const div=document.createElement('div');
+    div.className='myord-card';
+    const sc=statusClass[o.status]||'sp-pending';
+    const sl=statusLabel[o.status]||'⏳ Order Received';
+    div.innerHTML='<div class="myord-ch"><div class="myord-oid">'+o.id+'</div><span class="myord-spill '+sc+'">'+sl+'</span><div class="myord-time">'+o.timeStr+'</div></div>'
+      +'<div class="myord-items">'+o.items.map(it=>{const sub=it.displayLabel?'<div class="moi-sub">'+it.displayLabel.trim()+'</div>':'';return'<div class="myord-item'+(it.cancelled?' cancelled':'')+'"><span class="moi-q">'+it.qty+'</span><div style="flex:1"><div class="moi-n">'+it.name+sub+'</div></div><span class="moi-p">฿'+it.price*it.qty+'</span></div>';}).join('')+'</div>'
+      +(o.note?'<div class="myord-note">\u{1F4DD} '+o.note+'</div>':'')
+      +'<div class="myord-foot"><span class="myord-tot">Total: <span>฿'+total+'</span></span></div>';
+    body.appendChild(div);
+  });
+}
+function resetForNewGuest(){
+  table=null;cart={};
+  document.getElementById('myordPanel').classList.remove('on');
+  document.getElementById('myordBtn').classList.remove('vis');
+  document.getElementById('myordDot').classList.remove('vis');
+  document.getElementById('suc').classList.remove('on');
+  document.getElementById('menuScreen').style.display='none';
+  document.getElementById('tblScreen').style.display='block';
+  document.getElementById('tblBadge').style.display='none';
+  document.querySelectorAll('.tc').forEach(e=>e.classList.remove('sel'));
+}
+
+function catIcon(id){return({breakfast:'🌅',salad:'🥗',fried_starters:'🍗',appetizer:'🍢',chilipaste:'🌶️',pork_chicken:'🍖',fish:'🐟',veggie_stir:'🥬',egg:'🥚',spicy_sour:'🍋',soup_curry:'🍲',single_dish:'🍛',veggie_menu:'🌿',coffee:'☕',tea:'🍵',milk:'🥛',drinks:'🥤',mocktail:'🍹',cocktail:'🍸',beer_wine:'🍺',spirit:'🥃',dessert:'🍰'}[id]||'🍽️');}
+
+</script>
+</body>
+</html>
