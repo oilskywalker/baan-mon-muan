@@ -552,13 +552,7 @@ function showToast(msg){
 buildSidebar();
 
 /* ── OUT OF STOCK MANAGER ── */
-let _outOfStock={};
 let _stkCatFilter='all';
-
-_db.ref('bmm_outofstock').on('value',snap=>{
-  _outOfStock=snap.val()||{};
-  if(document.getElementById('stockOverlay').classList.contains('on')) renderStockMgr();
-});
 
 function openStockMgr(){
   _stkCatFilter='all';
@@ -656,6 +650,12 @@ const FIREBASE_CONFIG = {
 };
 firebase.initializeApp(FIREBASE_CONFIG);
 const _db = firebase.database();
+
+let _outOfStock={};
+_db.ref('bmm_outofstock').on('value',snap=>{
+  _outOfStock=snap.val()||{};
+  if(document.getElementById('stockOverlay').classList.contains('on')) renderStockMgr();
+});
 
 let _salesCache = [];
 _db.ref('bmm_sales').on('value', snap => {
