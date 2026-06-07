@@ -1012,11 +1012,10 @@ function placeOrder(){
   
   const orders=loadOrders();
   const now=new Date();
-  // Generate safe order ID
-  const todayOrders=orders.filter(o=>new Date(o.time).toDateString()===now.toDateString());
-  const seq=todayOrders.length+1;
+  // Generate order ID as simple count number
+  const seq=orders.length+1;
   const order={
-    id:'ORD'+now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(seq).padStart(3,'0'),
+    id:'#'+seq,
     table,
     items:vals.map(i=>({...i})),
     note:document.getElementById('nota').value.trim(),
@@ -1044,3 +1043,4 @@ function catIcon(id){return({breakfast:'🌅',salad:'🥗',fried_starters:'🍗'
 </script>
 </body>
 </html>
+                                                                                                                                                                                                                                   
