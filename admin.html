@@ -684,6 +684,49 @@ _db.ref('bmm_sales').on('value', snap => {
   _salesCache = snap.val() ? Object.values(snap.val()) : [];
 });
 function loadSales(){ return _salesCache; }
+
+let _serviceHours = {enabled: false, open: '09:00', close: '21:00'};
+_db.ref('bmm_service_hours').on('value', snap => {
+  _serviceHours = snap.val() || {enabled: false, open: '09:00', close: '21:00'};
+});
+
+function openHoursMgr(){
+  const h = _serviceHours;
+  document.getElementById('hrsEnabled').checked = !!h.enabled;
+  document.getElementById('hrsOpen').value = h.open || '09:00';
+  document.getElementById('hrsClose').value = h.close || '21:00';
+  hrsUpdateStatus();
+  document.getElementById('hrsOverlay').classList.add('on');
+}
+function closeHoursMgr(e){ if(e.target===document.getElementById('hrsOverlay')) closeHoursMgrBtn(); }
+function closeHoursMgrBtn(){ document.getElementById('hrsOverlay').classList.remove('on'); }
+function hrsUpdateStatus(){
+  const enabled = document.getElementById('hrsEnabled').checked;
+  const open = document.getElementById('hrsOpen').value;
+  const close = document.getElementById('hrsClose').value;
+  const el = document.getElementById('hrsStatus');
+  if(!enabled){ el.className='hrs-status'; el.textContent=''; return; }
+  const now = new Date();
+  const cur = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  const isOpen = cur >= open && cur < close;
+  el.className = 'hrs-status ' + (isOpen ? 'open' : 'closed');
+  el.textContent = isOpen
+    ? '✅ Kitchen is currently OPEN ('+open+'–'+close+')'
+    : '🔴 Kitchen is currently CLOSED — opens at '+open;
+}
+function saveHours(){
+  const data = {
+    enabled: document.getElementById('hrsEnabled').checked,
+    open: document.getElementById('hrsOpen').value,
+    close: document.getElementById('hrsClose').value
+  };
+  _db.ref('bmm_service_hours').set(data).then(()=>{
+    _serviceHours = data;
+    closeHoursMgrBtn();
+    showToast('⏰ Service hours saved!');
+  });
+}
+
 function openSalesHistory(){
   renderSalesHistory();
   document.getElementById('shBg').classList.add('on');
@@ -777,6 +820,36 @@ function shToggle(i){document.getElementById('shi_'+i)?.classList.toggle('on');}
     <div class="save-dlg-actions">
       <button class="save-dlg-cancel" onclick="cancelSave()">Cancel</button>
       <button class="save-dlg-ok" onclick="confirmSave()">Yes, Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICE HOURS MODAL -->
+<div class="hrs-overlay" id="hrsOverlay" onclick="closeHoursMgr(event)">
+  <div class="hrs-modal">
+    <div class="hrs-title">⏰ Service Hours</div>
+    <div class="hrs-sub">Set the hours your kitchen is open. Outside this window, customers will see a "closed" screen on the menu page.</div>
+    <div class="hrs-toggle-row">
+      <span class="hrs-toggle-lbl">Enable service hours restriction</span>
+      <label class="hrs-toggle">
+        <input type="checkbox" id="hrsEnabled" onchange="hrsUpdateStatus()">
+        <span class="hrs-slider"></span>
+      </label>
+    </div>
+    <div class="hrs-row">
+      <div class="hrs-field">
+        <label>Opens at</label>
+        <input type="time" id="hrsOpen" value="09:00" onchange="hrsUpdateStatus()">
+      </div>
+      <div class="hrs-field">
+        <label>Closes at</label>
+        <input type="time" id="hrsClose" value="21:00" onchange="hrsUpdateStatus()">
+      </div>
+    </div>
+    <div class="hrs-status" id="hrsStatus"></div>
+    <div class="hrs-actions">
+      <button class="hrs-cancel" onclick="closeHoursMgrBtn()">Cancel</button>
+      <button class="hrs-save" onclick="saveHours()">Save Hours</button>
     </div>
   </div>
 </div>

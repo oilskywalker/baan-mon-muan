@@ -186,12 +186,30 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .dm-cancel{flex:1;padding:12px;background:none;border:1px solid var(--b);color:var(--dim);border-radius:10px;font-family:'Sarabun';font-size:14px;cursor:pointer}
 .dm-confirm{flex:2;padding:12px;background:linear-gradient(135deg,var(--gold-d),var(--gold-l));color:var(--black);border:none;border-radius:10px;font-family:'Sarabun';font-size:14px;font-weight:700;cursor:pointer}
 
+
+/* ── KITCHEN CLOSED SCREEN ── */
+#kitchenClosed{position:fixed;inset:0;z-index:9999;background:var(--dark,#0a0800);display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+#kitchenClosed.on{display:flex}
+.kc-icon{font-size:72px;margin-bottom:24px;opacity:.7}
+.kc-title{font-family:'Cinzel',serif;font-size:clamp(22px,5vw,32px);color:#C9A84C;letter-spacing:2px;margin-bottom:16px}
+.kc-msg{font-size:clamp(14px,3vw,17px);color:#9A8A60;line-height:1.7;max-width:380px;margin-bottom:32px}
+.kc-time{font-family:'Cinzel',serif;font-size:clamp(28px,6vw,48px);color:#E8C97A;letter-spacing:3px;margin-bottom:8px}
+.kc-date{font-size:13px;color:#9A8A60;letter-spacing:1px}
+.kc-clock{margin-top:32px;font-family:'Cinzel',serif;font-size:clamp(14px,3vw,18px);color:rgba(201,168,76,.4);letter-spacing:2px}
 </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
+<div id="kitchenClosed">
+  <div class="kc-icon">🍽️</div>
+  <div class="kc-title">Kitchen Closed</div>
+  <div class="kc-msg" id="kcMsg">We are not open yet. The kitchen will be available at:</div>
+  <div class="kc-time" id="kcOpenTime">—</div>
+  <div class="kc-date" id="kcOpenDate"></div>
+  <div class="kc-clock" id="kcNowClock"></div>
+</div>
 
 <header class="hdr">
   <div>
@@ -803,6 +821,49 @@ let _salesCache = [];
 
 // Listen for real-time order changes from any device
 let _outOfStock={};
+
+// ── SERVICE HOURS ──
+let _svcHours = null;
+let _svcClockInterval = null;
+_db.ref('bmm_service_hours').on('value', snap => {
+  _svcHours = snap.val() || null;
+  checkServiceHours();
+});
+function checkServiceHours(){
+  const el = document.getElementById('kitchenClosed');
+  if(!_svcHours || !_svcHours.enabled){ el.classList.remove('on'); return; }
+  const now = new Date();
+  const cur = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  const isOpen = cur >= _svcHours.open && cur < _svcHours.close;
+  if(isOpen){
+    el.classList.remove('on');
+    if(_svcClockInterval){ clearInterval(_svcClockInterval); _svcClockInterval=null; }
+  } else {
+    el.classList.add('on');
+    document.getElementById('kcOpenTime').textContent = _svcHours.open;
+    const [oh,om] = _svcHours.open.split(':');
+    const [ch,cm] = _svcHours.close.split(':');
+    const isAfterClose = cur >= _svcHours.close;
+    document.getElementById('kcMsg').textContent = isAfterClose
+      ? 'The kitchen is now closed. Come back tomorrow at:'
+      : 'The kitchen is not open yet. We will be ready at:';
+    document.getElementById('kcOpenDate').textContent = isAfterClose
+      ? 'Open tomorrow '+_svcHours.open+' – '+_svcHours.close
+      : 'Today '+_svcHours.open+' – '+_svcHours.close;
+    // Start live clock
+    if(!_svcClockInterval){
+      function updateKcClock(){
+        const n=new Date();
+        document.getElementById('kcNowClock').textContent='Current time  '+
+          n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')+':'+n.getSeconds().toString().padStart(2,'0');
+        checkServiceHours();
+      }
+      updateKcClock();
+      _svcClockInterval = setInterval(updateKcClock, 1000);
+    }
+  }
+}
+
 _db.ref('bmm_outofstock').on('value',snap=>{
   _outOfStock=snap.val()||{};
   try{buildMenu();}catch(e){}
