@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Baan Mon Muan â Reserve</title>
+<title>Baan Mon Muan – Reserve</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -23,13 +23,13 @@
 html{height:100%}
 body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;overflow-x:hidden}
 
-/* ââ STEPS ââ */
+/* ── STEPS ── */
 .step{display:none;flex-direction:column;min-height:100dvh}
 .step.on{display:flex}
 
-/* ââââââââââââââââââââââââââââââââ
-   STEP 1 â INFO & DATE/TIME
-ââââââââââââââââââââââââââââââââ */
+/* ════════════════════════════════
+   STEP 1 — INFO & DATE/TIME
+════════════════════════════════ */
 .s1-header{background:var(--dark);border-bottom:2px solid var(--gold-d);padding:28px 20px 22px;text-align:center;flex-shrink:0}
 .s1-logo{font-family:'Cinzel';font-size:clamp(20px,5vw,28px);font-weight:700;background:linear-gradient(135deg,var(--gold-l),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;line-height:1.2}
 .s1-tagline{font-size:11px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin-top:5px}
@@ -54,9 +54,9 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
 .next-btn:active{opacity:.85}
 .ghost-btn{width:100%;padding:13px;background:none;border:1px solid var(--b2);color:var(--gold);border-radius:10px;font-family:'Cinzel';font-size:13px;cursor:pointer;margin-top:10px}
 
-/* ââââââââââââââââââââââââââââââââ
-   STEP 2 â MENU
-ââââââââââââââââââââââââââââââââ */
+/* ════════════════════════════════
+   STEP 2 — MENU
+════════════════════════════════ */
 .menu-topbar{height:56px;background:var(--dark);border-bottom:2px solid var(--gold-d);display:flex;align-items:center;gap:10px;padding:0 14px;flex-shrink:0}
 .back-btn{background:none;border:1px solid var(--b2);color:var(--gold);padding:6px 14px;border-radius:6px;font-family:'Sarabun';font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0}
 .menu-topbar-title{font-family:'Cinzel';font-size:14px;color:var(--gold-l);letter-spacing:1px;flex:1}
@@ -112,16 +112,16 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
 .dm-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;display:none;align-items:flex-end}
 .dm-bg.on{display:flex}
 .dm-sheet{background:var(--dark2);border-radius:16px 16px 0 0;padding:22px 16px 36px;width:100%;border-top:2px solid var(--gold-d)}
-.dm-title{font-family:'Cinzel';font-size:15px;color:var(--gold-l);letter-spacing:1px;margin-bottom:18px;text-align:center}
+.dm-title{font-family:'Cinzel';font-size:15px;color:var(--gold-l);letter-spacing:1px;margin-bottom:16px;text-align:center}
 .dm-label{font-size:11px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:600}
 .dm-opts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .dm-opt{padding:8px 14px;border-radius:20px;border:1px solid var(--b2);color:var(--dim);background:none;font-family:'Sarabun';font-size:13px;cursor:pointer;transition:all .15s}
 .dm-opt.on{background:var(--b2);color:var(--gold-l);border-color:var(--gold)}
 .dm-add-btn{width:100%;padding:14px;background:var(--gold-d);color:var(--text);border:none;border-radius:8px;font-family:'Cinzel';font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;letter-spacing:.5px}
 
-/* ââââââââââââââââââââââââââââââââ
-   STEP 3 â STATUS
-ââââââââââââââââââââââââââââââââ */
+/* ════════════════════════════════
+   STEP 3 — STATUS
+════════════════════════════════ */
 .s3-wrap{flex:1;display:flex;flex-direction:column;align-items:center;padding:36px 20px 60px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .s3-logo{font-family:'Cinzel';font-size:clamp(14px,4vw,20px);font-weight:700;background:linear-gradient(135deg,var(--gold-l),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;margin-bottom:28px}
 .s3-main-icon{font-size:64px;margin-bottom:16px;line-height:1;transition:all .4s}
@@ -149,14 +149,14 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
 </head>
 <body>
 
-<!-- ââââââââââââââââââââââââââââââââââââââââ
-     STEP 1 â CUSTOMER INFO & DATE/TIME
-ââââââââââââââââââââââââââââââââââââââââ -->
+<!-- ════════════════════════════════════════
+     STEP 1 — CUSTOMER INFO & DATE/TIME
+════════════════════════════════════════ -->
 <div class="step on" id="step1">
   <div class="s1-header">
     <div class="s1-logo">BAAN MON MUAN</div>
     <div class="s1-tagline">Restaurant &amp; Retreat</div>
-    <div class="s1-subtitle">â­ Table Reservation System</div>
+    <div class="s1-subtitle">⭐ Table Reservation System</div>
   </div>
 
   <div class="s1-body">
@@ -186,7 +186,7 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
           <input type="time" id="rTime" step="900">
         </div>
       </div>
-      <p class="time-note" id="timeNote">â± Earliest available: <strong id="minTimeLabel">â</strong><br>Reservations must be at least 30 minutes ahead</p>
+      <p class="time-note" id="timeNote">⏱ Earliest available: <strong id="minTimeLabel">–</strong><br>Reservations must be at least 30 minutes ahead</p>
     </div>
 
     <!-- Guests -->
@@ -195,7 +195,7 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
       <div class="field">
         <label>Number of Guests *</label>
         <select id="rGuests">
-          <option value="">Select number of guestsâ¦</option>
+          <option value="">Select number of guests…</option>
           <option value="1">1 person</option>
           <option value="2">2 people</option>
           <option value="3">3 people</option>
@@ -214,27 +214,27 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
     <div class="s1-section">
       <div class="s1-section-title">Special Requests <span style="font-size:9px;color:var(--dim);letter-spacing:0;text-transform:none">(optional)</span></div>
       <div class="field">
-        <textarea id="rNote" placeholder="Allergies, celebrations, seating preferences, room numberâ¦"></textarea>
+        <textarea id="rNote" placeholder="Allergies, celebrations, seating preferences, room number…"></textarea>
       </div>
     </div>
   </div>
 
   <div class="s1-foot">
-    <button class="next-btn" onclick="goToMenu()">Next â Pre-order Menu â</button>
+    <button class="next-btn" onclick="goToMenu()">Next — Pre-order Menu →</button>
     <button class="ghost-btn" onclick="goToMenuSkip()">Reserve without pre-ordering</button>
   </div>
 </div>
 
 
-<!-- ââââââââââââââââââââââââââââââââââââââââ
-     STEP 2 â MENU PRE-ORDER
-ââââââââââââââââââââââââââââââââââââââââ -->
+<!-- ════════════════════════════════════════
+     STEP 2 — MENU PRE-ORDER
+════════════════════════════════════════ -->
 <div class="step" id="step2">
   <div class="menu-topbar">
-    <button class="back-btn" onclick="goBack()">â Back</button>
+    <button class="back-btn" onclick="goBack()">← Back</button>
     <div class="menu-topbar-title">Pre-order Menu</div>
     <button class="cart-btn" id="cartBtn" onclick="openCart()">
-      ð
+      🛒
       <span class="cart-badge" id="cartBadge">0</span>
     </button>
   </div>
@@ -243,15 +243,15 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
     <div class="menu-grid" id="menuGrid"></div>
   </div>
   <div class="menu-foot">
-    <button class="skip-btn" onclick="submitReservation(true)">Skip â Confirm reservation without pre-ordering</button>
+    <button class="skip-btn" onclick="submitReservation(true)">Skip — Confirm reservation without pre-ordering</button>
   </div>
 </div>
 
 <!-- Cart Panel -->
 <div class="cart-panel" id="cartPanel">
   <div class="cart-hdr">
-    <div class="cart-hdr-title">ð Your Pre-order</div>
-    <button class="cart-close-btn" onclick="closeCart()">â Close</button>
+    <div class="cart-hdr-title">🛒 Your Pre-order</div>
+    <button class="cart-close-btn" onclick="closeCart()">✕ Close</button>
   </div>
   <div class="cart-body" id="cartBody">
     <div class="cart-empty">No items yet.<br>Browse the menu to add.</div>
@@ -259,9 +259,9 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
   <div class="cart-foot">
     <div class="cart-total-row">
       <span>Total</span>
-      <span id="cartTotal">à¸¿0</span>
+      <span id="cartTotal">฿0</span>
     </div>
-    <button class="confirm-btn" onclick="submitReservation(false)">â Confirm Reservation</button>
+    <button class="confirm-btn" onclick="submitReservation(false)">✅ Confirm Reservation</button>
   </div>
 </div>
 
@@ -278,18 +278,18 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
 </div>
 
 
-<!-- ââââââââââââââââââââââââââââââââââââââââ
-     STEP 3 â STATUS SCREEN
-ââââââââââââââââââââââââââââââââââââââââ -->
+<!-- ════════════════════════════════════════
+     STEP 3 — STATUS SCREEN
+════════════════════════════════════════ -->
 <div class="step" id="step3">
   <div class="s3-wrap">
     <div class="s3-logo">BAAN MON MUAN</div>
-    <div class="s3-main-icon" id="s3Icon">â³</div>
+    <div class="s3-main-icon" id="s3Icon">⏳</div>
     <div class="s3-headline" id="s3Headline">Reservation Submitted!</div>
     <div class="s3-sub" id="s3Sub">Please wait while our team reviews your request. This page updates automatically.</div>
 
     <div class="s3-status-box pending" id="s3StatusBox">
-      <span class="s3-status-ico" id="s3StatusIco">â³</span>
+      <span class="s3-status-ico" id="s3StatusIco">⏳</span>
       <span class="s3-status-lbl" id="s3StatusLbl">Awaiting Confirmation</span>
       <div class="s3-status-note" id="s3StatusNote">Our team will respond shortly</div>
     </div>
@@ -303,7 +303,7 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
 <script>
 'use strict';
 
-// ââ FIREBASE ââââââââââââââââââââââââââââââââââââââââââââââ
+// ── FIREBASE ──────────────────────────────────────────────
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDkyydLHfUmZukZsWVbZ343aeYIGk54XCg",
   authDomain: "baan-mon-muan-f4ad5.firebaseapp.com",
@@ -316,8 +316,8 @@ const FIREBASE_CONFIG = {
 firebase.initializeApp(FIREBASE_CONFIG);
 const _db = firebase.database();
 
-// ââ STATE âââââââââââââââââââââââââââââââââââââââââââââââââ
-let cart = {};        // cartKey â {id,name,price,qty,sweet?,temp?}
+// ── STATE ─────────────────────────────────────────────────
+let cart = {};        // cartKey → {id,name,price,qty,sweet?,temp?}
 let outOfStock = new Set();
 let activeCat = null;
 let dmItem = null;    // item pending drink customization
@@ -327,12 +327,12 @@ let currentResId = null;
 let submitting = false;
 let skipMenu = false; // true if user skipped menu step
 
-// ââ DRINK CONFIG ââââââââââââââââââââââââââââââââââââââââââ
+// ── DRINK CONFIG ──────────────────────────────────────────
 const DRINK_CATS  = new Set(['coffee','tea','milk','drinks','mocktail','cocktail','beer_wine','spirit']);
 const SWEET_LEVELS = ['100%','75%','50%','25%','0%'];
 const TEMP_OPTIONS = ['Iced','Hot','Blended'];
 
-// ââ DATE / TIME INIT ââââââââââââââââââââââââââââââââââââââ
+// ── DATE / TIME INIT ──────────────────────────────────────
 function initDateTime(){
   const now = new Date();
   const todayStr = now.toISOString().slice(0,10);
@@ -360,7 +360,7 @@ function updateTimeMin(){
   document.getElementById('minTimeLabel').textContent = (dateVal <= todayStr) ? h+':'+m+' today' : 'Any time';
 }
 
-// ââ STEP NAVIGATION âââââââââââââââââââââââââââââââââââââââ
+// ── STEP NAVIGATION ───────────────────────────────────────
 function showStep(n){
   document.querySelectorAll('.step').forEach(s => s.classList.remove('on'));
   document.getElementById('step'+n).classList.add('on');
@@ -409,7 +409,7 @@ function goBack(){
   showStep(1);
 }
 
-// ââ MENU BUILD ââââââââââââââââââââââââââââââââââââââââââââ
+// ── MENU BUILD ────────────────────────────────────────────
 function buildMenu(){
   const catbar = document.getElementById('catbar');
   const grid   = document.getElementById('menuGrid');
@@ -440,11 +440,11 @@ function buildMenu(){
       ${oos?'<div class="mcard-oos-label">SOLD OUT</div>':''}
       <div class="mcard-info">
         <div class="mcard-name">${item.name}</div>
-        <div class="mcard-price">à¸¿${item.price}</div>
+        <div class="mcard-price">฿${item.price}</div>
         ${!oos ? `<div class="qty-row"><div class="qty-btns">
-          <button class="qty-btn" onclick="adjustQty('${item.id}',${item.price},'${encodeURIComponent(item.name)}',${isDrinkCat},-1,event)">â</button>
+          <button class="qty-btn" onclick="adjustQty('${item.id}',${item.price},'${encodeURIComponent(item.name)}',${isDrinkCat},-1,event)">−</button>
           <span class="qty-num">${qty}</span>
-          <button class="qty-btn" onclick="adjustQty('${item.id}',${item.price},'${encodeURIComponent(item.name)}',${isDrinkCat},1,event)">ï¼</button>
+          <button class="qty-btn" onclick="adjustQty('${item.id}',${item.price},'${encodeURIComponent(item.name)}',${isDrinkCat},1,event)">＋</button>
         </div></div>` : ''}
       </div>
     </div>`;
@@ -473,7 +473,7 @@ function adjustQty(id, price, encodedName, isDrink, delta, e){
   buildMenu();
 }
 
-// ââ DRINK MODAL âââââââââââââââââââââââââââââââââââââââââââ
+// ── DRINK MODAL ───────────────────────────────────────────
 function openDrinkModal(){
   _dmSweet = '100%'; _dmTemp = 'Iced';
   document.getElementById('dmName').textContent = dmItem.name;
@@ -499,7 +499,7 @@ function drinkConfirm(){
   buildMenu();
 }
 
-// ââ CART UI âââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CART UI ───────────────────────────────────────────────
 function updateCartUI(){
   const vals  = Object.values(cart);
   const total = vals.reduce((s,i) => s+i.price*i.qty, 0);
@@ -507,7 +507,7 @@ function updateCartUI(){
   const badge = document.getElementById('cartBadge');
   badge.textContent = count;
   badge.className   = 'cart-badge' + (count>0?' vis':'');
-  document.getElementById('cartTotal').textContent = 'à¸¿'+total.toLocaleString();
+  document.getElementById('cartTotal').textContent = '฿'+total.toLocaleString();
   const body = document.getElementById('cartBody');
   if(!vals.length){
     body.innerHTML = '<div class="cart-empty">No items yet.<br>Browse the menu to add.</div>';
@@ -515,14 +515,14 @@ function updateCartUI(){
   }
   body.innerHTML = vals.map((item,_,arr) => {
     const key = Object.keys(cart).find(k => cart[k]===item);
-    const sub = [item.sweet, item.temp].filter(Boolean).join(' Â· ');
+    const sub = [item.sweet, item.temp].filter(Boolean).join(' · ');
     return `<div class="ci">
       <div class="ci-info">
-        <div class="ci-name">${item.name} Ã${item.qty}</div>
+        <div class="ci-name">${item.name} ×${item.qty}</div>
         ${sub?`<div class="ci-sub">${sub}</div>`:''}
       </div>
-      <div class="ci-price">à¸¿${(item.price*item.qty).toLocaleString()}</div>
-      <button class="ci-del" onclick="removeItem('${key}')">Ã</button>
+      <div class="ci-price">฿${(item.price*item.qty).toLocaleString()}</div>
+      <button class="ci-del" onclick="removeItem('${key}')">×</button>
     </div>`;
   }).join('');
 }
@@ -530,7 +530,7 @@ function removeItem(key){ delete cart[key]; updateCartUI(); buildMenu(); }
 function openCart(){ document.getElementById('cartPanel').classList.add('on'); updateCartUI(); }
 function closeCart(){ document.getElementById('cartPanel').classList.remove('on'); }
 
-// ââ SUBMIT RESERVATION ââââââââââââââââââââââââââââââââââââ
+// ── SUBMIT RESERVATION ────────────────────────────────────
 function submitReservation(noOrder){
   if(submitting) return;
   submitting = true;
@@ -564,7 +564,7 @@ function submitReservation(noOrder){
     });
 }
 
-// ââ STEP 3 ââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── STEP 3 ────────────────────────────────────────────────
 function renderS3Summary(r){
   let dateStr = r.date;
   try{
@@ -577,7 +577,7 @@ function renderS3Summary(r){
     <div class="s3-row"><span class="s3-key">Date</span><span class="s3-val">${dateStr}</span></div>
     <div class="s3-row"><span class="s3-key">Time</span><span class="s3-val">${r.time}</span></div>
     <div class="s3-row"><span class="s3-key">Guests</span><span class="s3-val">${r.guests} ${r.guests==='1'?'person':'people'}</span></div>
-    ${r.items.length?`<div class="s3-row"><span class="s3-key">Pre-order</span><span class="s3-val">${r.items.length} item(s) Â· à¸¿${r.total.toLocaleString()}</span></div>`:''}
+    ${r.items.length?`<div class="s3-row"><span class="s3-key">Pre-order</span><span class="s3-val">${r.items.length} item(s) · ฿${r.total.toLocaleString()}</span></div>`:''}
     ${r.note?`<div class="s3-row"><span class="s3-key">Requests</span><span class="s3-val">${r.note}</span></div>`:''}
   `;
   document.getElementById('s3Ref').textContent = 'Ref: '+currentResId;
@@ -597,31 +597,45 @@ function applyStatus(status, assignedTable){
   const note = document.getElementById('s3StatusNote');
   box.className = 's3-status-box '+status;
   if(status==='pending'){
-    ico.textContent='â³'; lbl.textContent='Awaiting Confirmation';
+    ico.textContent='⏳'; lbl.textContent='Awaiting Confirmation';
     note.textContent='Our team will respond shortly';
-    document.getElementById('s3Icon').textContent='â³';
+    document.getElementById('s3Icon').textContent='⏳';
     document.getElementById('s3Headline').textContent='Reservation Submitted!';
     document.getElementById('s3Sub').textContent='Please wait while our team reviews your request. This page updates automatically.';
   } else if(status==='confirmed'){
     if(assignedTable){
-      // Kitchen has assigned a real table â customer is seated
-      ico.textContent='ðª'; lbl.textContent='Table '+assignedTable+' is Ready for You!';
+      // Kitchen has assigned a real table — customer is seated
+      ico.textContent='🪑'; lbl.textContent='Table '+assignedTable+' is Ready for You!';
       note.textContent='Please head to your table and enjoy your meal';
-      document.getElementById('s3Icon').textContent='ðª';
+      document.getElementById('s3Icon').textContent='🪑';
       document.getElementById('s3Headline').textContent='Your Table is Ready!';
-      document.getElementById('s3Sub').textContent='Please proceed to Table '+assignedTable+'. Enjoy your meal â see you inside!';
+      document.getElementById('s3Sub').textContent='Please proceed to Table '+assignedTable+'. Enjoy your meal — see you inside!';
     } else {
-      ico.textContent='â'; lbl.textContent='Reservation Confirmed!';
+      ico.textContent='✅'; lbl.textContent='Reservation Confirmed!';
       note.textContent='We look forward to welcoming you';
-      document.getElementById('s3Icon').textContent='ð';
+      document.getElementById('s3Icon').textContent='🎉';
       document.getElementById('s3Headline').textContent='See You Soon!';
       document.getElementById('s3Sub').textContent='Your table is reserved. We\'re excited to have you with us!';
     }
   } else if(status==='rejected'){
-    ico.textContent='â'; lbl.textContent='Unable to Accommodate';
+    ico.textContent='❌'; lbl.textContent='Unable to Accommodate';
     note.textContent='Please contact us directly for assistance';
-    document.getElementById('s3Icon').textContent='ð';
+    document.getElementById('s3Icon').textContent='😔';
     document.getElementById('s3Headline').textContent='Request Declined';
     document.getElementById('s3Sub').textContent='We\'re sorry we cannot confirm this reservation. Please call us for alternative arrangements.';
   }
 }
+
+// ── OUT OF STOCK ──────────────────────────────────────────
+_db.ref('bmm_outofstock').on('value', snap=>{
+  const data = snap.val()||{};
+  outOfStock = new Set(Object.entries(data).filter(([,v])=>v).map(([k])=>k));
+  if(document.getElementById('step2').classList.contains('on')) buildMenu();
+});
+
+// ── BOOT ─────────────────────────────────────────────────
+initDateTime();
+updateCartUI();
+</script>
+</body>
+</html>
