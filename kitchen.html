@@ -807,4 +807,98 @@ function renderReservations(){
     const itemsHtml = (r.items && r.items.length)
       ? `<div class="rcard-items">
            <div class="rcard-items-title">Pre-order (${r.items.length} item${r.items.length>1?'s':''})</div>
-           ${r.items.map
+           ${r.items.map(i=>`<div class="rcard-item-row">${i.name}${i.sweet?' · '+i.sweet:''}${i.temp?' · '+i.temp:''} ×${i.qty}</div>`).join('')}
+           <div style="margin-top:6px;color:var(--gold);font-family:'Cinzel';font-size:12px">฿${(r.total||0).toLocaleString()}</div>
+         </div>`
+      : '<div class="rcard-items" style="color:var(--dim);font-size:11px">No pre-order</div>';
+    const noteHtml = r.note ? `<div class="rcard-note">💬 ${r.note}</div>` : '';
+    const actionsHtml = r.status === 'pending'
+      ? `<div class="rcard-actions">
+           <button class="rcard-confirm-btn" onclick="confirmReservation('${id}')">✅ Confirm</button>
+           <button class="rcard-reject-btn" onclick="rejectReservation('${id}')">✕ Decline</button>
+         </div>`
+      : '';
+    return `<div class="rcard ${r.status||'pending'}">
+      <div class="rcard-head">
+        <div>
+          <div class="rcard-name">${r.name||'Guest'}</div>
+          <div class="rcard-phone">📞 ${r.phone||'–'}</div>
+        </div>
+        <div class="rcard-badge ${r.status||'pending'}">${statusLabel}</div>
+      </div>
+      <div class="rcard-info">
+        <span><span class="lbl">📅 Date</span>${dateStr}</span>
+        <span><span class="lbl">🕐 Time</span>${r.time||'–'}</span>
+        <span><span class="lbl">👥 Guests</span>${r.guests||'–'} ${r.guests==='1'?'person':'people'}</span>
+      </div>
+      ${itemsHtml}
+      ${noteHtml}
+      ${actionsHtml}
+    </div>`;
+  }).join('');
+}
+
+function reserveCountdown(dateStr, timeStr){
+  if(!dateStr||!timeStr) return {text:'–',cls:'ok'};
+  const appt=new Date(dateStr+'T'+timeStr+':00');
+  const diffMin=Math.round((appt-Date.now())/60000);
+  if(diffMin<0){
+    const over=Math.abs(diffMin);
+    return{text:'⚠ '+(over<60?over+'m':Math.floor(over/60)+'h '+over%60+'m')+' overdue',cls:'overdue'};
+  }
+  if(diffMin===0)return{text:'⏰ Now!',cls:'urgent'};
+  if(diffMin<30)return{text:'⏰ '+diffMin+'m',cls:'urgent'};
+  const h=Math.floor(diffMin/60),m=diffMin%60;
+  return{text:'⏰ '+(h>0?h+'h ':'')+(m>0?m+'m':''),cls:'ok'};
+}
+
+function confirmReservation(id){
+  const r=_reservationsCache[id];
+  if(!r) return;
+
+  // 1. Mark reservation confirmed
+  _db.ref('bmm_reservations/'+id+'/status').set('confirmed');
+
+  // 2. Push pre-order to kitchen board
+  const now=new Date();
+  const ts=now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+  const shortId=id.slice(-4).toUpperCase();
+  const orderId='RES'+ts+'-'+shortId;
+
+  const orderItems=(r.items||[]).map(it=>({
+    name:it.name||'',
+    nameTh:it.nameTh||it.name||'',
+    price:it.price||0,
+    qty:it.qty||1,
+    itemId:it.itemId||it.name||'',
+    displayLabel:[it.sweet,it.temp].filter(Boolean).join(' · '),
+    cancelled:false
+  }));
+
+  const order={
+    id:orderId,
+    table:0,
+    isReserve:true,
+    reserveId:id,
+    reserveName:r.name||'Guest',
+    reservePhone:r.phone||'',
+    reserveDate:r.date||'',
+    reserveTime:r.time||'',
+    reserveGuests:r.guests||'',
+    items:orderItems,
+    status:'pending',
+    time:now.toISOString(),
+    timeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),
+    note:r.note||'',
+    total:r.total||0
+  };
+  _db.ref('bmm_orders/'+orderId.replace(/[.#$\[\]]/g,'_')).set(order);
+}
+function rejectReservation(id){
+  if(!confirm('Decline this reservation?')) return;
+  _db.ref('bmm_reservations/'+id+'/status').set('rejected');
+}
+
+</script>
+</body>
+</html>
