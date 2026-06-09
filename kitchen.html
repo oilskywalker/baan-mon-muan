@@ -386,6 +386,7 @@ function actionBtn(o){
 }
 
 function render(){
+  if(filter==='reserve'){ renderReservations(); return; }
   const orders=loadOrders();
   const today=new Date().toDateString();
   const tod=orders.filter(o=>new Date(o.time).toDateString()===today);
