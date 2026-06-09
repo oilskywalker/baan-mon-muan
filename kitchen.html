@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Baan Mon Muan â Kitchen</title>
+<title>Baan Mon Muan – Kitchen</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -64,7 +64,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .ch-tbl{background:rgba(201,168,76,.12);border:1px solid var(--b);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--dim);white-space:nowrap}
 .ch-tbl b{color:var(--gold);font-family:'Cinzel';font-size:13px}
 .ch-time{font-size:11px;color:var(--dim);margin-left:auto;white-space:nowrap}
-.ch-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.ch-right{display:flex;flex-direction:column;align-items:flex-end;gap:3py}
 .pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
 .pill-pending{background:rgba(232,168,76,.15);color:var(--pending);border:1px solid rgba(232,168,76,.4)}
 .pill-preparing{background:rgba(76,168,232,.15);color:var(--preparing);border:1px solid rgba(76,168,232,.4)}
@@ -89,12 +89,12 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .oi-sub{font-size:10px;color:var(--dim);font-style:italic}
 .oi-p{font-family:'Cinzel';font-size:11px;color:var(--dim);white-space:nowrap;flex-shrink:0}
 .cnote{margin:4px 14px;background:rgba(201,168,76,.05);border:1px solid var(--b);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--dim);font-style:italic}
-/* Card footer (mini â no action buttons on card) */
+/* Card footer (mini — no action buttons on card) */
 .cfoot-mini{padding:8px 14px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;gap:8px}
 .cftotal{font-family:'Cinzel';font-size:13px;color:var(--dim);flex-shrink:0}
 .cftotal span{color:var(--gold-l)}
 .cfoot-hint{font-size:10px;color:var(--dim);font-style:italic;opacity:.7}
-/* Removed inline action buttons from card â now in popup only */
+/* Removed inline action buttons from card — now in popup only */
 .oi-more{padding:5px 0 2px;font-size:11px;color:var(--gold-d);font-style:italic;letter-spacing:.3px}
 .card.clickable{cursor:pointer}
 .card.clickable:hover{border-color:var(--gold-d)}
@@ -180,7 +180,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .tdf-total{text-align:center;font-family:'Cinzel';font-size:16px;color:var(--gold-l);padding:8px 0}
 .tdf-note{font-size:11px;color:var(--dim);text-align:center;margin-top:4px}
 
-/* ââ RESERVATION CARDS ââ */
+/* ══ RESERVATION CARDS ══ */
 .res-board{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:14px;display:grid;gap:12px;align-content:start;grid-template-columns:1fr}
 @media(min-width:600px){.res-board{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:900px){.res-board{grid-template-columns:repeat(3,1fr)}}
@@ -221,26 +221,26 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
   </div>
   <div class="live-dot" title="Live"></div>
   <div class="clock" id="clock">00:00:00</div>
-  <button class="bell-btn" id="bellBtn" onclick="toggleBell()" title="Sound alert">ð</button>
-  <button class="nbtn" onclick="render()">â³</button>
+  <button class="bell-btn" id="bellBtn" onclick="toggleBell()" title="Sound alert">🔔</button>
+  <button class="nbtn" onclick="render()">⟳</button>
   <a href="index.html" class="nbtn">Menu</a>
 </div>
 
 <div class="stbar">
-  <button class="stab on" onclick="setF('current',this)">â¡ CURRENT ORDER <span class="sbadge" id="b_current">0</span></button>
-  <button class="stab" onclick="setF('pending',this)">ð´ NEW <span class="sbadge" id="b_pending">0</span></button>
-  <button class="stab" onclick="setF('preparing',this)">ðµ PREPARING <span class="sbadge" id="b_preparing">0</span></button>
-  <button class="stab" onclick="setF('ready',this)">ð¢ READY <span class="sbadge" id="b_ready">0</span></button>
-  <button class="stab" onclick="setF('served',this)">â SERVED <span class="sbadge" id="b_served">0</span></button>
-  <button class="stab" onclick="setF('paid',this)">ð³ PAID <span class="sbadge" id="b_paid">0</span></button>
+  <button class="stab on" onclick="setF('current',this)">⚡ CURRENT ORDER <span class="sbadge" id="b_current">0</span></button>
+  <button class="stab" onclick="setF('pending',this)">🔴 NEW <span class="sbadge" id="b_pending">0</span></button>
+  <button class="stab" onclick="setF('preparing',this)">🔵 PREPARING <span class="sbadge" id="b_preparing">0</span></button>
+  <button class="stab" onclick="setF('ready',this)">🟢 READY <span class="sbadge" id="b_ready">0</span></button>
+  <button class="stab" onclick="setF('served',this)">✅ SERVED <span class="sbadge" id="b_served">0</span></button>
+  <button class="stab" onclick="setF('paid',this)">💳 PAID <span class="sbadge" id="b_paid">0</span></button>
   <button class="stab" onclick="setF('all',this)">ALL <span class="sbadge" id="b_all">0</span></button>
-  <button class="stab" onclick="setF('reserve',this)">ð RESERVE <span class="sbadge" id="b_reserve">0</span></button>
+  <button class="stab" onclick="setF('reserve',this)">📋 RESERVE <span class="sbadge" id="b_reserve">0</span></button>
 </div>
 
 <div class="vbar" id="vbar">
   <span class="vbar-lbl">View:</span>
-  <button class="vbtn on" id="vOrders" onclick="setView('orders')">ð Orders</button>
-  <button class="vbtn" id="vTables" onclick="setView('tables')">ð½ï¸ By Table</button>
+  <button class="vbtn on" id="vOrders" onclick="setView('orders')">📋 Orders</button>
+  <button class="vbtn" id="vTables" onclick="setView('tables')">🍽️ By Table</button>
 </div>
 
 <div class="board" id="board"></div>
@@ -251,16 +251,16 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 <div class="tdpop-bg" id="tdpopBg" onclick="closeTdPop(event)">
   <div class="tdpop" id="tdpop">
     <div class="tdpop-head">
-      <div class="tdpop-title" id="tdpopTitle">Table â</div>
-      <button class="tdpop-close" onclick="closeTdPopBtn()">â</button>
+      <div class="tdpop-title" id="tdpopTitle">Table —</div>
+      <button class="tdpop-close" onclick="closeTdPopBtn()">✕</button>
     </div>
     <div class="tdpop-body" id="tdpopBody"></div>
     <div class="tdpop-foot" id="tdpopFoot">
       <div style="flex:1">
-        <div class="tdf-total" id="tdpopTotal">à¸¿0</div>
+        <div class="tdf-total" id="tdpopTotal">฿0</div>
         <div class="tdf-note" id="tdpopNote">Table total</div>
       </div>
-      <button class="tdf-btn tdf-paid" id="tdpopPayBtn" onclick="markTablePaid()" style="display:none">ð³ Confirm Payment & Clear</button>
+      <button class="tdf-btn tdf-paid" id="tdpopPayBtn" onclick="markTablePaid()" style="display:none">💳 Confirm Payment & Clear</button>
     </div>
   </div>
 </div>
@@ -270,7 +270,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
   <div class="stat"><div class="sdot" style="background:var(--preparing)"></div><span class="slbl">Preparing</span><span class="sval" id="sv_pr" style="color:var(--preparing)">0</span></div>
   <div class="stat"><div class="sdot" style="background:var(--ready)"></div><span class="slbl">Ready</span><span class="sval" id="sv_r" style="color:var(--ready)">0</span></div>
   <div class="stat" style="margin-left:auto"><span class="slbl">Today</span><span class="sval" id="sv_t" style="color:var(--gold)">0</span></div>
-  <div class="stat"><span class="slbl">Revenue</span><span class="sval" id="sv_rev" style="color:var(--gold-l)">à¸¿0</span></div>
+  <div class="stat"><span class="slbl">Revenue</span><span class="sval" id="sv_rev" style="color:var(--gold-l)">฿0</span></div>
 </div>
 
 <script>
@@ -282,7 +282,7 @@ let lastPendingCount=0;
 let viewMode='orders'; // 'orders' or 'tables'
 let activeTdTable=null;
 
-// ââ FIREBASE CONFIG (fill in your project values) ââ
+// ── FIREBASE CONFIG (fill in your project values) ──
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDkyydLHfUmZukZsWVbZ343aeYIGk54XCg",
   authDomain: "baan-mon-muan-f4ad5.firebaseapp.com",
@@ -295,7 +295,7 @@ const FIREBASE_CONFIG = {
 firebase.initializeApp(FIREBASE_CONFIG);
 const _db = firebase.database();
 
-// ââ STORAGE (Firebase Realtime Database â shared across all devices) ââ
+// ── STORAGE (Firebase Realtime Database — shared across all devices) ──
 let _ordersCache = [];
 let _salesCache  = [];
 let _prevOrderIds = new Set();
@@ -376,16 +376,16 @@ function setView(v){
 function elapsedMins(iso){return Math.floor((Date.now()-new Date(iso))/60000);}
 
 function pill(s){
-  const m={pending:['pill-pending','ð´ New'],preparing:['pill-preparing','ðµ Prep'],ready:['pill-ready','ð¢ Ready'],served:['pill-served','â Served'],paid:['pill-paid','ð³ Paid']};
+  const m={pending:['pill-pending','🔴 New'],preparing:['pill-preparing','🔵 Prep'],ready:['pill-ready','🟢 Ready'],served:['pill-served','✅ Served'],paid:['pill-paid','💳 Paid']};
   const[c,l]=m[s]||m.pending;
   return'<span class="pill '+c+'">'+l+'</span>';
 }
 
 function actionBtn(o){
-  if(o.status==='pending')return'<button class="actbtn btn-start" onclick="upd(\''+o.id+'\',\'preparing\')">â¶ Start Cooking</button>';
-  if(o.status==='preparing')return'<button class="actbtn btn-ready" onclick="upd(\''+o.id+'\',\'ready\')">â Mark Ready</button>';
-  if(o.status==='ready')return'<button class="actbtn btn-served" onclick="upd(\''+o.id+'\',\'served\')">ð½ Mark Served</button><button class="actbtn btn-table" onclick="openTdPop('+o.table+')">Table '+o.table+'</button>';
-  if(o.status==='served')return'<button class="actbtn btn-table" onclick="openTdPop('+o.table+')">ð³ Checkout Tbl '+o.table+'</button>';
+  if(o.status==='pending')return'<button class="actbtn btn-start" onclick="upd(\''+o.id+'\',\'preparing\')">▶ Start Cooking</button>';
+  if(o.status==='preparing')return'<button class="actbtn btn-ready" onclick="upd(\''+o.id+'\',\'ready\')">✓ Mark Ready</button>';
+  if(o.status==='ready')return'<button class="actbtn btn-served" onclick="upd(\''+o.id+'\',\'served\')">🍽 Mark Served</button><button class="actbtn btn-table" onclick="openTdPop('+o.table+')">Table '+o.table+'</button>';
+  if(o.status==='served')return'<button class="actbtn btn-table" onclick="openTdPop('+o.table+')">💳 Checkout Tbl '+o.table+'</button>';
   return'<span class="btn-done">Completed</span>';
 }
 
@@ -418,7 +418,7 @@ function render(){
   const sales=loadSales();
   const todaySales=sales.filter(s=>new Date(s.paidAt).toDateString()===today);
   const rev=todaySales.reduce((s,o)=>s+o.total,0);
-  document.getElementById('sv_rev').textContent='à¸¿'+rev;
+  document.getElementById('sv_rev').textContent='฿'+rev;
 
   if(viewMode==='orders')renderOrders(tod);
   else renderTables(tod);
@@ -443,7 +443,7 @@ function renderOrders(tod){
   board.innerHTML='';
   if(!list.length){
     const emptyMsg={all:'No orders today yet',current:'No active orders',paid:'No paid orders today'}[filter]||('No '+filter+' orders');
-    board.innerHTML='<div class="empty"><div class="empty-ico">ð½ï¸</div><div class="empty-txt">'+emptyMsg+'</div></div>';
+    board.innerHTML='<div class="empty"><div class="empty-ico">🍽️</div><div class="empty-txt">'+emptyMsg+'</div></div>';
     return;
   }
 
@@ -464,9 +464,9 @@ function renderOrders(tod){
 
     const previewHtml=preview.map(it=>{
       const sub=it.displayLabel?'<div class="oi-sub">'+it.displayLabel.trim()+'</div>':'';
-      return'<div class="oi"><span class="oi-q">'+it.qty+'</span><span class="oi-n">'+it.name+sub+'<div class="oi-nth">'+it.nameTh+'</div></span><span class="oi-p">à¸¿'+it.price*it.qty+'</span></div>';
+      return'<div class="oi"><span class="oi-q">'+it.qty+'</span><span class="oi-n">'+it.name+sub+'<div class="oi-nth">'+it.nameTh+'</div></span><span class="oi-p">฿'+it.price*it.qty+'</span></div>';
     }).join('');
-    const moreHtml=extra>0?'<div class="oi-more">+'+extra+' more item'+(extra>1?'s':'')+'  Â·  tap to see all</div>':'';
+    const moreHtml=extra>0?'<div class="oi-more">+'+extra+' more item'+(extra>1?'s':'')+'  ·  tap to see all</div>':'';
 
     if(o.isReserve){
       const cd=reserveCountdown(o.reserveDate,o.reserveTime);
@@ -474,14 +474,14 @@ function renderOrders(tod){
       div.className='card clickable reserve-card'+(isNew?' new-order':'');
       div.innerHTML=
         '<div class="ch">'
-        +'<div><div class="ch-id">'+o.id+'</div><div style="font-size:11px;color:var(--gold-l);margin-top:2px">'+o.reserveName+'  Â·  '+o.reserveGuests+' guests</div></div>'
-        +'<div class="ch-tbl" style="border-color:var(--gold);background:rgba(201,168,76,.2)">ð <b>RSRV</b></div>'
+        +'<div><div class="ch-id">'+o.id+'</div><div style="font-size:11px;color:var(--gold-l);margin-top:2px">'+o.reserveName+'  ·  '+o.reserveGuests+' guests</div></div>'
+        +'<div class="ch-tbl" style="border-color:var(--gold);background:rgba(201,168,76,.2)">📋 <b>RSRV</b></div>'
         +'<div class="ch-right">'+pill(o.status)+'<span class="elapsed '+cd.cls+'">'+cd.text+'</span></div>'
         +'</div>'
-        +'<div style="padding:4px 14px;font-size:11px;color:var(--dim)">ð '+dateDisp+' '+o.reserveTime+'</div>'
+        +'<div style="padding:4px 14px;font-size:11px;color:var(--dim)">📅 '+dateDisp+' '+o.reserveTime+'</div>'
         +(activeItems.length?'<div class="citems">'+previewHtml+moreHtml+'</div>':'<div style="padding:8px 14px;font-size:12px;color:var(--dim);font-style:italic">No pre-order</div>')
-        +(o.note?'<div class="cnote">ð '+o.note+'</div>':'')
-        +'<div class="cfoot-mini"><span class="cftotal">à¸¿<span>'+total+'</span></span><span class="cfoot-hint">Tap for details & actions âº</span></div>';
+        +(o.note?'<div class="cnote">📝 '+o.note+'</div>':'')
+        +'<div class="cfoot-mini"><span class="cftotal">฿<span>'+total+'</span></span><span class="cfoot-hint">Tap for details & actions ›</span></div>';
     } else {
       div.innerHTML=
         '<div class="ch">'
@@ -491,8 +491,8 @@ function renderOrders(tod){
         +'<div class="ch-right">'+pill(o.status)+(o.status!=='served'&&o.status!=='paid'?'<span class="elapsed '+(mins>20?'warn':'ok')+'">'+mins+'m</span>':'')+'</div>'
         +'</div>'
         +'<div class="citems">'+previewHtml+moreHtml+'</div>'
-        +(o.note?'<div class="cnote">ð '+o.note+'</div>':'')
-        +'<div class="cfoot-mini"><span class="cftotal">à¸¿<span>'+total+'</span></span><span class="cfoot-hint">Tap for details & actions âº</span></div>';
+        +(o.note?'<div class="cnote">📝 '+o.note+'</div>':'')
+        +'<div class="cfoot-mini"><span class="cftotal">฿<span>'+total+'</span></span><span class="cfoot-hint">Tap for details & actions ›</span></div>';
     }
     board.appendChild(div);
   });
@@ -506,7 +506,7 @@ function openOrderPop(orderId){
   activeTdTable=o.table; // reuse existing popup infra
   // Build single-order popup
   const body=document.getElementById('tdpopBody');
-  document.getElementById('tdpopTitle').textContent=o.isReserve?o.id+'  Â·  RESERVE â '+o.reserveName:o.id+'  Â·  Table '+o.table;
+  document.getElementById('tdpopTitle').textContent=o.isReserve?o.id+'  ·  RESERVE – '+o.reserveName:o.id+'  ·  Table '+o.table;
   body.innerHTML='';
 
   const activeItems=(o.items||[]).filter(it=>!it.cancelled);
@@ -516,25 +516,25 @@ function openOrderPop(orderId){
   const div=document.createElement('div');
   div.className='tdpop-order';
   div.innerHTML=
-    '<div class="tdpop-oh">'    +pill(o.status)    +'<span class="tdpop-otime">'+o.timeStr+'  Â·  '+mins+'m ago</span>'    +'</div>'    +'<div class="tdpop-items">'    +o.items.map(it=>{
+    '<div class="tdpop-oh">'    +pill(o.status)    +'<span class="tdpop-otime">'+o.timeStr+'  ·  '+mins+'m ago</span>'    +'</div>'    +'<div class="tdpop-items">'    +o.items.map(it=>{
       const sub=it.displayLabel?'<div class="tdi-sub">'+it.displayLabel.trim()+'</div>':'';
       const cancelBtn=!it.cancelled
-        ?'<button class="tdi-cancel" onclick="cancelItemSingle(event,\''+o.id+'\',\''+encodeURIComponent(it.name)+'\')">â Cancel</button>'
+        ?'<button class="tdi-cancel" onclick="cancelItemSingle(event,\''+o.id+'\',\''+encodeURIComponent(it.name)+'\')">✕ Cancel</button>'
         :'<span style="font-size:10px;color:#E88080">Cancelled</span>';
-      return'<div class="tdpop-item'+(it.cancelled?' cancelled':'')+'">'        +'<span class="tdi-qty">'+it.qty+'</span>'        +'<div style="flex:1"><div class="tdi-name">'+it.name+sub+'</div><div class="tdi-sub">'+it.nameTh+'</div></div>'        +'<span class="tdi-price">à¸¿'+it.price*it.qty+'</span>'        +cancelBtn        +'</div>';
-    }).join('')    +'</div>'    +(o.note?'<div class="tdpop-note">ð '+o.note+'</div>':'');
+      return'<div class="tdpop-item'+(it.cancelled?' cancelled':'')+'">'        +'<span class="tdi-qty">'+it.qty+'</span>'        +'<div style="flex:1"><div class="tdi-name">'+it.name+sub+'</div><div class="tdi-sub">'+it.nameTh+'</div></div>'        +'<span class="tdi-price">฿'+it.price*it.qty+'</span>'        +cancelBtn        +'</div>';
+    }).join('')    +'</div>'    +(o.note?'<div class="tdpop-note">📝 '+o.note+'</div>':'');
 
   // Action buttons
   let actionHtml='';
-  if(o.status==='pending')  actionHtml='<button class="tdf-btn btn-start-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'preparing\')">â¶ Start Cooking</button>';
-  if(o.status==='preparing')actionHtml='<button class="tdf-btn btn-ready-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'ready\')">â Mark Ready</button>';
-  if(o.status==='ready')    actionHtml='<button class="tdf-btn btn-served-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'served\')">ð½ Mark Served</button>';
-  if(o.status==='served')   actionHtml='<button class="tdf-btn tdf-paid" onclick="'+(o.isReserve?'assignTableAndCheckout(\''+o.id+'\')':'markTablePaid()')+'">ð³ '+(o.isReserve?'Assign Table & Pay':'Checkout Table '+o.table)+'</button>';
+  if(o.status==='pending')  actionHtml='<button class="tdf-btn btn-start-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'preparing\')">▶ Start Cooking</button>';
+  if(o.status==='preparing')actionHtml='<button class="tdf-btn btn-ready-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'ready\')">✓ Mark Ready</button>';
+  if(o.status==='ready')    actionHtml='<button class="tdf-btn btn-served-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'served\')">🍽 Mark Served</button>';
+  if(o.status==='served')   actionHtml='<button class="tdf-btn tdf-paid" onclick="'+(o.isReserve?'assignTableAndCheckout(\''+o.id+'\')':'markTablePaid()')+'">💳 '+(o.isReserve?'Assign Table & Pay':'Checkout Table '+o.table)+'</button>';
 
   div.innerHTML+=actionHtml?'<div style="padding:10px 12px">'+actionHtml+'</div>':'';
   body.appendChild(div);
 
-  document.getElementById('tdpopTotal').textContent='à¸¿'+total;
+  document.getElementById('tdpopTotal').textContent='฿'+total;
   // Hide the generic pay button for reserve orders (they use assignTableAndCheckout instead)
   document.getElementById('tdpopPayBtn').style.display=(o.status==='served'&&!o.isReserve)?'flex':'none';
   document.getElementById('tdpopBg').classList.add('on');
@@ -606,9 +606,9 @@ function renderTables(tod){
 
     const itemsHtml=preview.map(it=>{
       const sub=it.label?'<span style="color:var(--dim);font-size:9px"> '+it.label.trim()+'</span>':'';
-      return'<div class="tci"><span class="tci-q">'+it.qty+'Ã</span><span class="tci-n">'+it.name+sub+'</span></div>';
+      return'<div class="tci"><span class="tci-q">'+it.qty+'ŗ</span><span class="tci-n">'+it.name+sub+'</span></div>';
     }).join('')
-    +(extra>0?'<div class="tci"><span class="tci-more">+'+extra+' more item'+(extra>1?'s':'')+'â¦</span></div>':'');
+    +(extra>0?'<div class="tci"><span class="tci-more">+'+extra+' more item'+(extra>1?'s':'')+'…</span></div>':'');
 
     div.innerHTML=
       '<div class="tcard-top">'
@@ -618,8 +618,8 @@ function renderTables(tod){
       +'</div>'
       +'<div class="tcard-items">'+itemsHtml+'</div>'
       +'<div class="tcard-foot">'
-        +'<span class="tcard-total">à¸¿'+total+'</span>'
-        +'<span class="tcard-hint">tap for details âº</span>'
+        +'<span class="tcard-total">฿'+total+'</span>'
+        +'<span class="tcard-hint">tap for details ›</span>'
         +'<span style="font-size:10px;color:var(--dim)">'+orderCount+' order'+(orderCount>1?'s':'')+'</span>'
       +'</div>';
 
@@ -629,7 +629,7 @@ function renderTables(tod){
 
 function openTdPop(tbl){
   activeTdTable=tbl;
-  document.getElementById('tdpopTitle').textContent='Table '+tbl+' â Orders';
+  document.getElementById('tdpopTitle').textContent='Table '+tbl+' — Orders';
   renderTdPop(tbl);
   document.getElementById('tdpopBg').classList.add('on');
 }
@@ -645,7 +645,7 @@ function renderTdPop(tbl){
 
   if(!tableOrders.length){
     body.innerHTML='<div style="text-align:center;padding:30px;color:var(--dim)">No active orders for this table</div>';
-    document.getElementById('tdpopTotal').textContent='à¸¿0';
+    document.getElementById('tdpopTotal').textContent='฿0';
     document.getElementById('tdpopPayBtn').disabled=true;
     return;
   }
@@ -666,25 +666,25 @@ function renderTdPop(tbl){
       +'<div class="tdpop-items">'
       +o.items.map(it=>{
         const subLabel=it.displayLabel?'<div class="tdi-sub">'+it.displayLabel.trim()+'</div>':'';
-        const cancelBtn=!it.cancelled?'<button class="tdi-cancel" onclick="cancelItem(\''+o.id+'\',\''+it.itemId+'\',\''+it.name.replace(/'/g,"\\'")+'\')" title="Cancel â item out of stock">â Cancel</button>':'<span style="font-size:10px;color:#E88080">Cancelled</span>';
+        const cancelBtn=!it.cancelled?'<button class="tdi-cancel" onclick="cancelItem(\''+o.id+'\',\''+it.itemId+'\',\''+it.name.replace(/'/g,"\\'")+'\')" title="Cancel – item out of stock">✕ Cancel</button>':'<span style="font-size:10px;color:#E88080">Cancelled</span>';
         return'<div class="tdpop-item'+(it.cancelled?' cancelled':'')+'">'
           +'<span class="tdi-qty">'+it.qty+'</span>'
           +'<div style="flex:1"><div class="tdi-name">'+it.name+subLabel+'</div><div class="tdi-sub">'+it.nameTh+'</div></div>'
-          +'<span class="tdi-price">à¸¿'+it.price*it.qty+'</span>'
+          +'<span class="tdi-price">฿'+it.price*it.qty+'</span>'
           +(o.status!=='served'?cancelBtn:'')
           +'</div>';
       }).join('')
       +'</div>'
-      +(o.note?'<div class="tdpop-note">ð '+o.note+'</div>':'')
-      +'<div class="tdpop-ofoot"><div class="tdpop-ototal">Total: <span>à¸¿'+orderTotal+'</span></div>'
-      +(o.status==='pending'?'<button class="actbtn btn-start" style="flex:none;padding:6px 12px;font-size:12px" onclick="updFromPop(\''+o.id+'\',\'preparing\')">â¶ Start</button>':'')
-      +(o.status==='preparing'?'<button class="actbtn btn-ready" style="flex:none;padding:6px 12px;font-size:12px" onclick="updFromPop(\''+o.id+'\',\'ready\')">â Ready</button>':'')
-      +(o.status==='ready'?'<button class="actbtn btn-served" style="flex:none;padding:6px 12px;font-size:12px" onclick="updFromPop(\''+o.id+'\',\'served\')">ð½ Served</button>':'')
+      +(o.note?'<div class="tdpop-note">📝 '+o.note+'</div>':'')
+      +'<div class="tdpop-ofoot"><div class="tdpop-ototal">Total: <span>฿'+orderTotal+'</span></div>'
+      +(o.status==='pending'?'<button class="actbtn btn-start" style="flex:none;padding:6px 12px;font-size:12px" onclick="updFromPop(\''+o.id+'\',\'preparing\')">▶ Start</button>':'')
+      +(o.status==='preparing'?'<button class="actbtn btn-ready" style="flex:none;padding:6px 12px;font-size:12px" onclick="updFromPop(\''+o.id+'\',\'ready\')">✓ Ready</button>':'')
+      +(o.status==='ready'?'<button class="actbtn btn-served" style="flex:none;padding:6px 12px;font-size:12px" onclick="updFromPop(\''+o.id+'\',\'served\')">🍽 Served</button>':'')
       +'</div>';
     body.appendChild(div);
   });
 
-  document.getElementById('tdpopTotal').textContent='à¸¿'+grandTotal;
+  document.getElementById('tdpopTotal').textContent='฿'+grandTotal;
   document.getElementById('tdpopPayBtn').disabled=false;
 }
 
@@ -710,7 +710,7 @@ function updFromPop(id,status){
   render();
 }
 
-// Mark all active table orders as paid â move to sales history â clear from active
+// Mark all active table orders as paid → move to sales history → clear from active
 function markTablePaid(){
   if(!activeTdTable)return;
   const orders=loadOrders();
@@ -719,7 +719,7 @@ function markTablePaid(){
   if(!tableOrders.length)return;
   const total=tableOrders.reduce((s,o)=>s+(o.items||[]).filter(i=>!i.cancelled).reduce((ss,i)=>ss+i.price*i.qty,0),0);
   const tblLabel=activeTdTable===0?'Reserve Order':'Table '+activeTdTable;
-  if(!confirm('Confirm payment of à¸¿'+total+' for '+tblLabel+'?\n\nThis will clear all orders for this table.'))return;
+  if(!confirm('Confirm payment of ฿'+total+' for '+tblLabel+'?\n\nThis will clear all orders for this table.'))return;
   
   const now=new Date();
   const sales=loadSales();
@@ -748,7 +748,7 @@ function markTablePaid(){
   render();
   
   // Show confirmation toast
-  showToast(tblLabel+' paid â  à¸¿'+total);
+  showToast(tblLabel+' paid ✓  ฿'+total);
 }
 
 function showToast(msg){
@@ -775,7 +775,7 @@ function upd(id,status){
 document.getElementById('bellBtn').className='bell-btn'+(bellOn?' on':'');
 render();
 
-// ââ RESERVATIONS ââ
+// ══ RESERVATIONS ══
 let _reservationsCache = {};
 
 _db.ref('bmm_reservations').on('value', snap => {
@@ -799,12 +799,12 @@ function renderReservations(){
   const entries = Object.entries(_reservationsCache)
     .sort(([,a],[,b]) => (b.createdAt||0) - (a.createdAt||0));
   if(!entries.length){
-    resBoard.innerHTML = '<div class="empty"><div class="empty-ico">ð</div><div class="empty-txt">No reservation requests yet</div></div>';
+    resBoard.innerHTML = '<div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">No reservation requests yet</div></div>';
     return;
   }
   resBoard.innerHTML = entries.map(([id, r]) => {
-    const statusLabel = {pending:'â³ Pending', confirmed:'â Confirmed', rejected:'â Declined'}[r.status] || r.status;
-    const dateStr = r.date ? r.date.split('-').reverse().join('/') : 'â';
+    const statusLabel = {pending:'⏳ Pending', confirmed:'✅ Confirmed', rejected:'❌ Declined'}[r.status] || r.status;
+    const dateStr = r.date ? r.date.split('-').reverse().join('/') : '–';
     const RPREVIEW = 3;
     const allItems = r.items || [];
     const previewItems = allItems.slice(0, RPREVIEW);
@@ -812,28 +812,28 @@ function renderReservations(){
     const itemsHtml = allItems.length
       ? `<div class="rcard-items">
            <div class="rcard-items-title">Pre-order (${allItems.length} item${allItems.length>1?'s':''})</div>
-           ${previewItems.map(i=>`<div class="rcard-item-row">${i.name}${i.sweet?' Â· '+i.sweet:''}${i.temp?' Â· '+i.temp:''} Ã${i.qty}</div>`).join('')}
-           ${extraCount>0?`<div style="margin-top:4px;font-size:11px;color:var(--gold-d)">+${extraCount} more Â· tap to see all</div>`:''}
-           <div style="margin-top:6px;color:var(--gold);font-family:'Cinzel';font-size:12px">à¸¿${(r.total||0).toLocaleString()}</div>
+           ${previewItems.map(i=>`<div class="rcard-item-row">${i.name}${i.sweet?' · '+i.sweet:''}${i.temp?' · '+i.temp:''} ×${i.qty}</div>`).join('')}
+           ${extraCount>0?`<div style="margin-top:4px;font-size:11px;color:var(--gold-d)">+${extraCount} more · tap to see all</div>`:''}
+           <div style="margin-top:6px;color:var(--gold);font-family:'Cinzel';font-size:12px">฿${(r.total||0).toLocaleString()}</div>
          </div>`
       : '<div class="rcard-items" style="color:var(--dim);font-size:11px">No pre-order</div>';
-    const noteHtml = r.note ? `<div class="rcard-note">ð¬ ${r.note}</div>` : '';
+    const noteHtml = r.note ? `<div class="rcard-note">💬 ${r.note}</div>` : '';
     return `<div class="rcard ${r.status||'pending'}" style="cursor:pointer" onclick="openResPop('${id}')">
       <div class="rcard-head">
         <div>
           <div class="rcard-name">${r.name||'Guest'}</div>
-          <div class="rcard-phone">ð ${r.phone||'â'}</div>
+          <div class="rcard-phone">📞 ${r.phone||'–'}</div>
         </div>
         <div class="rcard-badge ${r.status||'pending'}">${statusLabel}</div>
       </div>
       <div class="rcard-info">
-        <span><span class="lbl">ð Date</span>${dateStr}</span>
-        <span><span class="lbl">ð Time</span>${r.time||'â'}</span>
-        <span><span class="lbl">ð¥ Guests</span>${r.guests||'â'} ${r.guests==='1'?'person':'people'}</span>
+        <span><span class="lbl">📅 Date</span>${dateStr}</span>
+        <span><span class="lbl">🕐 Time</span>${r.time||'–'}</span>
+        <span><span class="lbl">👥 Guests</span>${r.guests||'–'} ${r.guests==='1'?'person':'people'}</span>
       </div>
       ${itemsHtml}
       ${noteHtml}
-      <div style="font-size:11px;color:var(--dim);text-align:right;margin-top:2px">Tap for details & actions âº</div>
+      <div style="font-size:11px;color:var(--dim);text-align:right;margin-top:2px">Tap for details & actions ›</div>
     </div>`;
   }).join('');
 }
@@ -841,51 +841,51 @@ function renderReservations(){
 function openResPop(id){
   const r = _reservationsCache[id];
   if(!r) return;
-  const statusLabel = {pending:'â³ Pending', confirmed:'â Confirmed', rejected:'â Declined'}[r.status] || r.status;
-  const dateStr = r.date ? r.date.split('-').reverse().join('/') : 'â';
+  const statusLabel = {pending:'⏳ Pending', confirmed:'✅ Confirmed', rejected:'❌ Declined'}[r.status] || r.status;
+  const dateStr = r.date ? r.date.split('-').reverse().join('/') : '–';
   const allItems = r.items || [];
   const itemsHtml = allItems.length
     ? '<div class="rcard-items-title" style="margin-bottom:8px">Pre-order ('+allItems.length+' item'+(allItems.length>1?'s':'')+')</div>'
-      + allItems.map(i=>'<div class="tdpop-item"><span class="tdi-qty">'+i.qty+'</span><div style="flex:1"><div class="tdi-name">'+i.name+(i.sweet||i.temp?' <span style="font-size:11px;color:var(--dim)">Â· '+(i.sweet||'')+(i.sweet&&i.temp?' Â· ':'')+( i.temp||'')+'</span>':'')+'</div></div><span class="tdi-price">à¸¿'+((i.price||0)*(i.qty||1))+'</span></div>').join('')
+      + allItems.map(i=>'<div class="tdpop-item"><span class="tdi-qty">'+i.qty+'</span><div style="flex:1"><div class="tdi-name">'+i.name+(i.sweet||i.temp?' <span style="font-size:11px;color:var(--dim)">· '+(i.sweet||'')+(i.sweet&&i.temp?' · ':'')+( i.temp||'')+'</span>':'')+'</div></div><span class="tdi-price">฿'+((i.price||0)*(i.qty||1))+'</span></div>').join('')
     : '<div style="color:var(--dim);font-size:12px;padding:8px 0">No pre-order</div>';
-  const noteHtml = r.note ? '<div class="tdpop-note">ð '+r.note+'</div>' : '';
+  const noteHtml = r.note ? '<div class="tdpop-note">📝 '+r.note+'</div>' : '';
   const actionHtml = r.status === 'pending'
-    ? '<button class="rcard-confirm-btn" style="flex:1;padding:12px" onclick="confirmReservation(\''+id+'\');closeTdPopBtn()">â Confirm Reservation</button>'
-      +'<button class="rcard-reject-btn" style="flex:1;padding:12px" onclick="rejectReservation(\''+id+'\');closeTdPopBtn()">â Decline</button>'
+    ? '<button class="rcard-confirm-btn" style="flex:1;padding:12px" onclick="confirmReservation(\''+id+'\');closeTdPopBtn()">✅ Confirm Reservation</button>'
+      +'<button class="rcard-reject-btn" style="flex:1;padding:12px" onclick="rejectReservation(\''+id+'\');closeTdPopBtn()">✕ Decline</button>'
     : '';
 
-  document.getElementById('tdpopTitle').textContent = r.name+' Â· '+r.guests+' guests  ['+statusLabel+']';
+  document.getElementById('tdpopTitle').textContent = r.name+' · '+r.guests+' guests  ['+statusLabel+']';
   const body = document.getElementById('tdpopBody');
   body.innerHTML = '';
   const div = document.createElement('div');
   div.className = 'tdpop-order';
   div.innerHTML =
-    '<div class="tdpop-oh"><span style="font-size:12px;color:var(--dim)">ð '+dateStr+'  ð '+(r.time||'â')+'</span></div>'
-    +'<div style="font-size:12px;color:var(--dim);padding:4px 0 8px">ð '+(r.phone||'â')+'</div>'
+    '<div class="tdpop-oh"><span style="font-size:12px;color:var(--dim)">📅 '+dateStr+'  🕐 '+(r.time||'–')+'</span></div>'
+    +'<div style="font-size:12px;color:var(--dim);padding:4px 0 8px">📞 '+(r.phone||'–')+'</div>'
     +'<div class="tdpop-items">'+itemsHtml+'</div>'
     + noteHtml
     +(actionHtml?'<div style="display:flex;gap:8px;padding-top:12px">'+actionHtml+'</div>':'');
   body.appendChild(div);
 
   const total = allItems.reduce((s,i)=>s+(i.price||0)*(i.qty||1), 0);
-  document.getElementById('tdpopTotal').textContent = 'à¸¿'+total;
+  document.getElementById('tdpopTotal').textContent = '฿'+total;
   document.getElementById('tdpopNote').textContent = r.status==='pending' ? 'Confirm or decline' : 'Reservation total';
   document.getElementById('tdpopPayBtn').style.display = 'none';
   document.getElementById('tdpopBg').classList.add('on');
 }
 
 function reserveCountdown(dateStr, timeStr){
-  if(!dateStr||!timeStr) return {text:'â',cls:'ok'};
+  if(!dateStr||!timeStr) return {text:'–',cls:'ok'};
   const appt=new Date(dateStr+'T'+timeStr+':00');
   const diffMin=Math.round((appt-Date.now())/60000);
   if(diffMin<0){
     const over=Math.abs(diffMin);
-    return{text:'â  '+(over<60?over+'m':Math.floor(over/60)+'h '+over%60+'m')+' overdue',cls:'overdue'};
+    return{text:'⚠ '+(over<60?over+'m':Math.floor(over/60)+'h '+over%60+'m')+' overdue',cls:'overdue'};
   }
-  if(diffMin===0)return{text:'â° Now!',cls:'urgent'};
-  if(diffMin<30)return{text:'â° '+diffMin+'m',cls:'urgent'};
+  if(diffMin===0)return{text:'⏰ Now!',cls:'urgent'};
+  if(diffMin<30)return{text:'⏰ '+diffMin+'m',cls:'urgent'};
   const h=Math.floor(diffMin/60),m=diffMin%60;
-  return{text:'â° '+(h>0?h+'h ':'')+(m>0?m+'m':''),cls:'ok'};
+  return{text:'⏰ '+(h>0?h+'h ':'')+(m>0?m+'m':''),cls:'ok'};
 }
 
 function confirmReservation(id){
@@ -902,7 +902,7 @@ function confirmReservation(id){
     price:it.price||0,
     qty:it.qty||1,
     itemId:it.itemId||it.name||'',
-    displayLabel:[it.sweet,it.temp].filter(Boolean).join(' Â· '),
+    displayLabel:[it.sweet,it.temp].filter(Boolean).join(' · '),
     cancelled:false
   }));
   const order={
@@ -925,7 +925,7 @@ function confirmReservation(id){
   _db.ref('bmm_orders/'+orderId.replace(/[.#$\[\]]/g,'_')).set(order);
 }
 function assignTableAndCheckout(orderId){
-  const tblStr=prompt('Which table number is this reservation seated at? (1â10)');
+  const tblStr=prompt('Which table number is this reservation seated at? (1–10)');
   if(tblStr===null) return;
   const tblNum=parseInt(tblStr.trim());
   if(isNaN(tblNum)||tblNum<1||tblNum>10){alert('Please enter a table number between 1 and 10.');return;}
@@ -934,7 +934,7 @@ function assignTableAndCheckout(orderId){
   if(!o) return;
   const activeItems=(o.items||[]).filter(i=>!i.cancelled);
   const total=activeItems.reduce((s,i)=>s+i.price*i.qty,0);
-  if(!confirm('Confirm payment of à¸¿'+total+' for RESERVE â '+o.reserveName+'?\nTable '+tblNum+' will be assigned.')) return;
+  if(!confirm('Confirm payment of ฿'+total+' for RESERVE – '+o.reserveName+'?\nTable '+tblNum+' will be assigned.')) return;
   if(o.reserveId) _db.ref('bmm_reservations/'+o.reserveId+'/assignedTable').set(tblNum);
   const now=new Date();
   const sales=loadSales();
@@ -948,7 +948,7 @@ function assignTableAndCheckout(orderId){
   o.status='paid';o.table=tblNum;
   saveOrders(orders);
   closeTdPopBtn();render();
-  showToast('RESERVE â '+o.reserveName+' paid â  à¸¿'+total+'  Table '+tblNum);
+  showToast('RESERVE – '+o.reserveName+' paid ✓  ฿'+total+'  Table '+tblNum);
 }
 function rejectReservation(id){
   if(!confirm('Decline this reservation?')) return;
