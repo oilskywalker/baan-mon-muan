@@ -74,6 +74,10 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .elapsed{font-family:'Cinzel';font-size:10px;padding:2px 7px;border-radius:4px;white-space:nowrap}
 .elapsed.ok{background:rgba(76,232,168,.1);color:var(--ready);border:1px solid rgba(76,232,168,.25)}
 .elapsed.warn{background:rgba(232,80,80,.2);color:#E88080;border:1px solid rgba(232,80,80,.35)}
+.elapsed.urgent{background:rgba(232,168,76,.2);color:#E8A84C;border:1px solid rgba(232,168,76,.4)}
+.elapsed.overdue{background:rgba(232,76,76,.2);color:#E84C4C;border:1px solid rgba(232,76,76,.4);animation:urgentFlash 1s ease infinite}
+.reserve-card{border-color:var(--gold-d)!important;border-width:2px!important}
+.reserve-card .ch{background:rgba(201,168,76,.06)!important}
 
 .citems{padding:10px 14px}
 .oi{display:flex;align-items:baseline;gap:7px;padding:5px 0;border-bottom:1px solid rgba(201,168,76,.07)}
@@ -464,16 +468,32 @@ function renderOrders(tod){
     }).join('');
     const moreHtml=extra>0?'<div class="oi-more">+'+extra+' more item'+(extra>1?'s':'')+'  ·  tap to see all</div>':'';
 
-    div.innerHTML=
-      '<div class="ch">'
-      +'<div><div class="ch-id">'+o.id+'</div></div>'
-      +'<div class="ch-tbl">Table <b>'+o.table+'</b></div>'
-      +'<div class="ch-time">'+o.timeStr+'</div>'
-      +'<div class="ch-right">'+pill(o.status)+(o.status!=='served'&&o.status!=='paid'?'<span class="elapsed '+(mins>20?'warn':'ok')+'">'+mins+'m</span>':'')+'</div>'
-      +'</div>'
-      +'<div class="citems">'+previewHtml+moreHtml+'</div>'
-      +(o.note?'<div class="cnote">📝 '+o.note+'</div>':'')
-      +'<div class="cfoot-mini"><span class="cftotal">฿<span>'+total+'</span></span><span class="cfoot-hint">Tap for details & actions ›</span></div>';
+    if(o.isReserve){
+      const cd=reserveCountdown(o.reserveDate,o.reserveTime);
+      const dateDisp=o.reserveDate?o.reserveDate.split('-').reverse().join('/'):'';
+      div.className='card clickable reserve-card'+(isNew?' new-order':'');
+      div.innerHTML=
+        '<div class="ch">'
+        +'<div><div class="ch-id">'+o.id+'</div><div style="font-size:11px;color:var(--gold-l);margin-top:2px">'+o.reserveName+'  ·  '+o.reserveGuests+' guests</div></div>'
+        +'<div class="ch-tbl" style="border-color:var(--gold);background:rgba(201,168,76,.2)">📋 <b>RSRV</b></div>'
+        +'<div class="ch-right">'+pill(o.status)+'<span class="elapsed '+cd.cls+'">'+cd.text+'</span></div>'
+        +'</div>'
+        +'<div style="padding:4px 14px;font-size:11px;color:var(--dim)">📅 '+dateDisp+' '+o.reserveTime+'</div>'
+        +(activeItems.length?'<div class="citems">'+previewHtml+moreHtml+'</div>':'<div style="padding:8px 14px;font-size:12px;color:var(--dim);font-style:italic">No pre-order</div>')
+        +(o.note?'<div class="cnote">📝 '+o.note+'</div>':'')
+        +'<div class="cfoot-mini"><span class="cftotal">฿<span>'+total+'</span></span><span class="cfoot-hint">Tap for details & actions ›</span></div>';
+    } else {
+      div.innerHTML=
+        '<div class="ch">'
+        +'<div><div class="ch-id">'+o.id+'</div></div>'
+        +'<div class="ch-tbl">Table <b>'+o.table+'</b></div>'
+        +'<div class="ch-time">'+o.timeStr+'</div>'
+        +'<div class="ch-right">'+pill(o.status)+(o.status!=='served'&&o.status!=='paid'?'<span class="elapsed '+(mins>20?'warn':'ok')+'">'+mins+'m</span>':'')+'</div>'
+        +'</div>'
+        +'<div class="citems">'+previewHtml+moreHtml+'</div>'
+        +(o.note?'<div class="cnote">📝 '+o.note+'</div>':'')
+        +'<div class="cfoot-mini"><span class="cftotal">฿<span>'+total+'</span></span><span class="cfoot-hint">Tap for details & actions ›</span></div>';
+    }
     board.appendChild(div);
   });
   prevIds=newIds;
@@ -486,7 +506,7 @@ function openOrderPop(orderId){
   activeTdTable=o.table; // reuse existing popup infra
   // Build single-order popup
   const body=document.getElementById('tdpopBody');
-  document.getElementById('tdpopTitle').textContent=o.id+'  ·  Table '+o.table;
+  document.getElementById('tdpopTitle').textContent=o.isReserve?o.id+'  ·  RESERVE – '+o.reserveName:o.id+'  ·  Table '+o.table;
   body.innerHTML='';
 
   const activeItems=o.items.filter(it=>!it.cancelled);
@@ -697,7 +717,8 @@ function markTablePaid(){
   const tableOrders=orders.filter(o=>o.table===activeTdTable&&new Date(o.time).toDateString()===today&&o.status!=='paid');
   if(!tableOrders.length)return;
   const total=tableOrders.reduce((s,o)=>s+o.items.filter(i=>!i.cancelled).reduce((ss,i)=>ss+i.price*i.qty,0),0);
-  if(!confirm('Confirm payment of ฿'+total+' for Table '+activeTdTable+'?\n\nThis will clear all orders for this table.'))return;
+  const tblLabel=activeTdTable===0?'Reserve Order':'Table '+activeTdTable;
+  if(!confirm('Confirm payment of ฿'+total+' for '+tblLabel+'?\n\nThis will clear all orders for this table.'))return;
   
   const now=new Date();
   const sales=loadSales();
@@ -726,7 +747,7 @@ function markTablePaid(){
   render();
   
   // Show confirmation toast
-  showToast('Table '+activeTdTable+' paid ✓  ฿'+total);
+  showToast(tblLabel+' paid ✓  ฿'+total);
 }
 
 function showToast(msg){
@@ -786,44 +807,4 @@ function renderReservations(){
     const itemsHtml = (r.items && r.items.length)
       ? `<div class="rcard-items">
            <div class="rcard-items-title">Pre-order (${r.items.length} item${r.items.length>1?'s':''})</div>
-           ${r.items.map(i=>`<div class="rcard-item-row">${i.name}${i.sweet?' · '+i.sweet:''}${i.temp?' · '+i.temp:''} ×${i.qty}</div>`).join('')}
-           <div style="margin-top:6px;color:var(--gold);font-family:'Cinzel';font-size:12px">฿${(r.total||0).toLocaleString()}</div>
-         </div>`
-      : '<div class="rcard-items" style="color:var(--dim);font-size:11px">No pre-order</div>';
-    const noteHtml = r.note ? `<div class="rcard-note">💬 ${r.note}</div>` : '';
-    const actionsHtml = r.status === 'pending'
-      ? `<div class="rcard-actions">
-           <button class="rcard-confirm-btn" onclick="confirmReservation('${id}')">✅ Confirm</button>
-           <button class="rcard-reject-btn" onclick="rejectReservation('${id}')">✕ Decline</button>
-         </div>`
-      : '';
-    return `<div class="rcard ${r.status||'pending'}">
-      <div class="rcard-head">
-        <div>
-          <div class="rcard-name">${r.name||'Guest'}</div>
-          <div class="rcard-phone">📞 ${r.phone||'–'}</div>
-        </div>
-        <div class="rcard-badge ${r.status||'pending'}">${statusLabel}</div>
-      </div>
-      <div class="rcard-info">
-        <span><span class="lbl">📅 Date</span>${dateStr}</span>
-        <span><span class="lbl">🕐 Time</span>${r.time||'–'}</span>
-        <span><span class="lbl">👥 Guests</span>${r.guests||'–'} ${r.guests==='1'?'person':'people'}</span>
-      </div>
-      ${itemsHtml}
-      ${noteHtml}
-      ${actionsHtml}
-    </div>`;
-  }).join('');
-}
-
-function confirmReservation(id){
-  _db.ref('bmm_reservations/'+id+'/status').set('confirmed');
-}
-function rejectReservation(id){
-  if(!confirm('Decline this reservation?')) return;
-  _db.ref('bmm_reservations/'+id+'/status').set('rejected');
-}
-
-</script>
-</body
+           ${r.items.map
