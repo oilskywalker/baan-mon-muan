@@ -207,6 +207,25 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .rcard-confirm-btn:active{background:rgba(76,232,168,.3)}
 .rcard-reject-btn{flex:1;padding:10px;background:rgba(232,76,76,.1);border:1px solid rgba(232,76,76,.3);color:#E84C4C;border-radius:8px;font-family:'Cinzel';font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px}
 .rcard-reject-btn:active{background:rgba(232,76,76,.25)}
+
+/* ══ TABLE ASSIGN PICKER ══ */
+.tpick-bg{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
+.tpick-bg.on{display:flex}
+.tpick-box{background:var(--dark);border:1px solid var(--b2);border-radius:18px;width:100%;max-width:380px;padding:28px 24px;animation:fadeIn .2s ease}
+.tpick-orn{text-align:center;color:var(--gold-d);font-size:12px;letter-spacing:3px;margin-bottom:6px}
+.tpick-title{font-family:'Cinzel';font-size:20px;color:var(--gold-l);text-align:center;letter-spacing:2px;margin-bottom:4px}
+.tpick-sub{font-size:12px;color:var(--dim);text-align:center;margin-bottom:22px;line-height:1.5}
+.tpick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px;max-width:320px;margin-left:auto;margin-right:auto}
+.tpc{background:var(--dark2);border:2px solid var(--b);border-radius:12px;padding:14px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.tpc:active{transform:scale(.93)}
+.tpc.sel{border-color:var(--gold);background:rgba(201,168,76,.18);box-shadow:0 0 0 1px rgba(201,168,76,.3)}
+.tpc-num{font-family:'Cinzel';font-size:20px;color:var(--gold)}
+.tpc-lbl{font-size:8px;color:var(--dim);margin-top:3px;letter-spacing:1px;text-transform:uppercase}
+.tpick-confirm{display:block;width:100%;padding:13px;background:linear-gradient(135deg,var(--gold-d),var(--gold-l));color:var(--black);border:none;border-radius:10px;font-family:'Cinzel';font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1.5px;margin-bottom:10px;transition:opacity .15s}
+.tpick-confirm:disabled{opacity:.4;cursor:not-allowed}
+.tpick-confirm:not(:disabled):active{opacity:.82}
+.tpick-cancel{display:block;width:100%;padding:10px;background:none;border:1px solid var(--b);color:var(--dim);border-radius:10px;font-family:'Sarabun';font-size:13px;cursor:pointer}
+.tpick-cancel:active{background:rgba(255,255,255,.05)}
 </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -262,6 +281,18 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
       </div>
       <button class="tdf-btn tdf-paid" id="tdpopPayBtn" onclick="markTablePaid()" style="display:none">💳 Confirm Payment & Clear</button>
     </div>
+  </div>
+</div>
+
+<!-- TABLE ASSIGN PICKER -->
+<div class="tpick-bg" id="tpickBg">
+  <div class="tpick-box">
+    <div class="tpick-orn">— ✦ —</div>
+    <div class="tpick-title">Assign Table</div>
+    <div class="tpick-sub" id="tpickSub">Select the table this reservation is seated at</div>
+    <div class="tpick-grid" id="tpickGrid"></div>
+    <button class="tpick-confirm" id="tpickConfirmBtn" onclick="confirmAssignTable()" disabled>CONFIRM &amp; CHECKOUT</button>
+    <button class="tpick-cancel" onclick="closeTpick()">Cancel</button>
   </div>
 </div>
 
@@ -606,7 +637,7 @@ function renderTables(tod){
 
     const itemsHtml=preview.map(it=>{
       const sub=it.label?'<span style="color:var(--dim);font-size:9px"> '+it.label.trim()+'</span>':'';
-      return'<div class="tci"><span class="tci-q">'+it.qty+'ŗ</span><span class="tci-n">'+it.name+sub+'</span></div>';
+      return'<div class="tci"><span class="tci-q">'+it.qty+'×</span><span class="tci-n">'+it.name+sub+'</span></div>';
     }).join('')
     +(extra>0?'<div class="tci"><span class="tci-more">+'+extra+' more item'+(extra>1?'s':'')+'…</span></div>':'');
 
@@ -893,68 +924,4 @@ function confirmReservation(id){
   if(!r) return;
   _db.ref('bmm_reservations/'+id+'/status').set('confirmed');
   const now=new Date();
-  const ts=now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
-  const shortId=id.slice(-4).toUpperCase();
-  const orderId='RES'+ts+'-'+shortId;
-  const orderItems=(r.items||[]).map(it=>({
-    name:it.name||'',
-    nameTh:it.nameTh||it.name||'',
-    price:it.price||0,
-    qty:it.qty||1,
-    itemId:it.itemId||it.name||'',
-    displayLabel:[it.sweet,it.temp].filter(Boolean).join(' · '),
-    cancelled:false
-  }));
-  const order={
-    id:orderId,
-    table:0,
-    isReserve:true,
-    reserveId:id,
-    reserveName:r.name||'Guest',
-    reservePhone:r.phone||'',
-    reserveDate:r.date||'',
-    reserveTime:r.time||'',
-    reserveGuests:r.guests||'',
-    items:orderItems,
-    status:'pending',
-    time:now.toISOString(),
-    timeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),
-    note:r.note||'',
-    total:r.total||0
-  };
-  _db.ref('bmm_orders/'+orderId.replace(/[.#$\[\]]/g,'_')).set(order);
-}
-function assignTableAndCheckout(orderId){
-  const tblStr=prompt('Which table number is this reservation seated at? (1–10)');
-  if(tblStr===null) return;
-  const tblNum=parseInt(tblStr.trim());
-  if(isNaN(tblNum)||tblNum<1||tblNum>10){alert('Please enter a table number between 1 and 10.');return;}
-  const orders=loadOrders();
-  const o=orders.find(x=>x.id===orderId);
-  if(!o) return;
-  const activeItems=(o.items||[]).filter(i=>!i.cancelled);
-  const total=activeItems.reduce((s,i)=>s+i.price*i.qty,0);
-  if(!confirm('Confirm payment of ฿'+total+' for RESERVE – '+o.reserveName+'?\nTable '+tblNum+' will be assigned.')) return;
-  if(o.reserveId) _db.ref('bmm_reservations/'+o.reserveId+'/assignedTable').set(tblNum);
-  const now=new Date();
-  const sales=loadSales();
-  sales.push({
-    id:'PAY'+now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(sales.length+1).padStart(3,'0'),
-    table:tblNum,orders:[orderId],items:activeItems,total,
-    paidAt:now.toISOString(),
-    paidTimeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})
-  });
-  saveSales(sales);
-  o.status='paid';o.table=tblNum;
-  saveOrders(orders);
-  closeTdPopBtn();render();
-  showToast('RESERVE – '+o.reserveName+' paid ✓  ฿'+total+'  Table '+tblNum);
-}
-function rejectReservation(id){
-  if(!confirm('Decline this reservation?')) return;
-  _db.ref('bmm_reservations/'+id+'/status').set('rejected');
-}
-
-</script>
-</body>
-</html>
+  const ts=now.g
