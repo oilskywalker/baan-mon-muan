@@ -192,6 +192,8 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .rfbtn#rfbNew.active .rfc{background:#E8A84C;color:#000}
 .rfbtn#rfbBooked .rfc{background:rgba(76,232,168,.15);color:#4CE8A8}
 .rfbtn#rfbBooked.active .rfc{background:#4CE8A8;color:#000}
+.rfbtn#rfbPaid .rfc{background:rgba(201,168,76,.2);color:var(--gold)}
+.rfbtn#rfbPaid.active .rfc{background:var(--gold);color:#000}
 .rcard{background:var(--dark2);border:1px solid var(--b);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .rcard.pending{border-left:3px solid #E8A84C}
 .rcard.confirmed{border-left:3px solid #4CE8A8}
@@ -274,6 +276,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 <div class="resv-fbar" id="resvFBar" style="display:none">
   <button class="rfbtn active" id="rfbNew" onclick="setResvFilter('new')">🆕 New <span class="rfc" id="rfcNew">0</span></button>
   <button class="rfbtn" id="rfbBooked" onclick="setResvFilter('booked')">📋 Booked <span class="rfc" id="rfcBooked">0</span></button>
+  <button class="rfbtn" id="rfbPaid" onclick="setResvFilter('paid')">💰 Paid <span class="rfc" id="rfcPaid">0</span></button>
 </div>
 <div class="res-board" id="resBoard" style="display:none"></div>
 <div class="table-board" id="tableboard" style="display:none"></div>
@@ -789,12 +792,13 @@ function markTablePaid(){
   });
   saveOrders(orders);
   
-  // Firebase handles cross-device sync
+  // Mark reservation as paid if reserve order
+  tableOrders.filter(o=>o.isReserve&&o.reserveId).forEach(o=>{
+    _db.ref('bmm_reservations/'+o.reserveId+'/status').set('paid');
+  });
   
   closeTdPopBtn();
   render();
-  
-  // Show confirmation toast
   showToast(tblLabel+' paid ✓  ฿'+total);
 }
 
@@ -862,6 +866,7 @@ function confirmAssignTable(){
       })),
       note:r.note||'',
       isReserve:true,
+      reserveId:resId,
       reserveName:r.name||'Guest',
       reserveDate:r.date||'',
       reserveTime:r.time||'',
@@ -961,17 +966,21 @@ function renderReservations(){
   const allEntries = Object.entries(_reservationsCache);
   const pendingCount = allEntries.filter(([,r])=>r.status==='pending'||!r.status).length;
   const bookedCount  = allEntries.filter(([,r])=>r.status==='confirmed').length;
+  const paidCount    = allEntries.filter(([,r])=>r.status==='paid').length;
   document.getElementById('rfcNew').textContent    = pendingCount;
   document.getElementById('rfcBooked').textContent = bookedCount;
+  document.getElementById('rfcPaid').textContent   = paidCount;
 
   const resBoard = document.getElementById('resBoard');
   const entries = allEntries
     .filter(([,r])=> resvFilter==='new'
       ? (r.status==='pending'||!r.status)
-      : r.status==='confirmed')
+      : resvFilter==='booked'
+      ? r.status==='confirmed'
+      : r.status==='paid')
     .sort(([,a],[,b]) => (b.createdAt||0) - (a.createdAt||0));
   if(!entries.length){
-    const msg = resvFilter==='new' ? 'No new requests' : 'No confirmed bookings';
+    const msg = resvFilter==='new' ? 'No new requests' : resvFilter==='booked' ? 'No confirmed bookings' : 'No paid reservations yet';
     resBoard.innerHTML = '<div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">'+msg+'</div></div>';
     return;
   }
