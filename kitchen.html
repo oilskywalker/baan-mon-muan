@@ -562,7 +562,7 @@ function openOrderPop(orderId){
   if(o.status==='pending')  actionHtml='<button class="tdf-btn btn-start-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'preparing\')">▶ Start Cooking</button>';
   if(o.status==='preparing')actionHtml='<button class="tdf-btn btn-ready-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'ready\')">✓ Mark Ready</button>';
   if(o.status==='ready')    actionHtml='<button class="tdf-btn btn-served-pop" onclick="updFromPopSingle(event,\''+o.id+'\',\'served\')">🍽 Mark Served</button>';
-  if(o.status==='served')   actionHtml='<button class="tdf-btn tdf-paid" onclick="'+(o.isReserve?'assignTableAndCheckout(\''+o.id+'\')':'markTablePaid()')+'">💳 '+(o.isReserve?'Assign Table & Pay':'Checkout Table '+o.table)+'</button>';
+  if(o.status==='served')   actionHtml='<button class="tdf-btn tdf-paid" onclick="'+(o.isReserve&&o.table===0?'assignTableAndCheckout(\''+o.id+'\')':'markTablePaid()')+'">💳 '+(o.isReserve&&o.table===0?'Assign Table & Pay':'Checkout Table '+o.table)+'</button>';
 
   div.innerHTML+=actionHtml?'<div style="padding:10px 12px">'+actionHtml+'</div>':'';
   body.appendChild(div);
@@ -822,13 +822,53 @@ function closeTpick(){
 
 function confirmAssignTable(){
   if(!_tpickOrderId||!_selAssignTable)return;
+  // ── Reservation confirmation mode ──
+  if(_tpickOrderId.startsWith('RESV:')){
+    const resId=_tpickOrderId.slice(5);
+    const r=_reservationsCache[resId];
+    if(!r){closeTpick();return;}
+    _db.ref('bmm_reservations/'+resId+'/status').set('confirmed');
+    const now=new Date();
+    const uid=String(Date.now()).slice(-5);
+    const orderId='RSV'+now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+uid;
+    const order={
+      id:orderId,
+      table:_selAssignTable,
+      status:'pending',
+      time:now.toISOString(),
+      timeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),
+      items:(r.items||[]).map(i=>({
+        name:i.name,
+        nameTh:i.nameTh||i.name,
+        qty:i.qty||1,
+        price:i.price||0,
+        itemId:i.itemId||i.name,
+        displayLabel:[i.sweet,i.temp].filter(Boolean).join(' · ')||'',
+        cancelled:false
+      })),
+      note:r.note||'',
+      isReserve:true,
+      reserveName:r.name||'Guest',
+      reserveDate:r.date||'',
+      reserveTime:r.time||'',
+      reserveGuests:r.guests||1,
+      name:r.name||'Guest'
+    };
+    const key=orderId.replace(/[.#$\[\]]/g,'_');
+    _db.ref('bmm_orders/'+key).set(order);
+    document.getElementById('tpickConfirmBtn').textContent='CONFIRM & CHECKOUT';
+    closeTpick();
+    closeTdPopBtn();
+    showToast('✅ Table '+_selAssignTable+' · '+(r.name||'Guest')+' confirmed → order sent to kitchen');
+    renderReservations();
+    return;
+  }
+  // ── Payment mode ──
   const orders=loadOrders();
   const o=orders.find(x=>x.id===_tpickOrderId);
   if(!o){closeTpick();return;}
-  // Assign table and mark paid
   o.table=_selAssignTable;
   o.status='paid';
-  // Record sale
   const now=new Date();
   const sales=loadSales();
   const total=(o.items||[]).filter(i=>!i.cancelled).reduce((s,i)=>s+i.price*i.qty,0);
@@ -844,6 +884,7 @@ function confirmAssignTable(){
   sales.push(saleRecord);
   saveSales(sales);
   saveOrders(orders);
+  document.getElementById('tpickConfirmBtn').textContent='CONFIRM & CHECKOUT';
   closeTpick();
   closeTdPopBtn();
   render();
@@ -982,40 +1023,23 @@ function reserveCountdown(dateStr, timeStr){
 function confirmReservation(id){
   const r=_reservationsCache[id];
   if(!r) return;
-  _db.ref('bmm_reservations/'+id+'/status').set('confirmed');
-
-  // Create a kitchen order so pre-ordered items appear on the board
-  const now=new Date();
-  const uid=String(Date.now()).slice(-5);
-  const orderId='RSV'+now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+uid;
-  const order={
-    id:orderId,
-    table:0,
-    status:'pending',
-    time:now.toISOString(),
-    timeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),
-    items:(r.items||[]).map(i=>({
-      name:i.name,
-      nameTh:i.nameTh||i.name,
-      qty:i.qty||1,
-      price:i.price||0,
-      itemId:i.itemId||i.name,
-      displayLabel:[i.sweet,i.temp].filter(Boolean).join(' · ')||'',
-      cancelled:false
-    })),
-    note:r.note||'',
-    isReserve:true,
-    reserveName:r.name||'Guest',
-    reserveDate:r.date||'',
-    reserveTime:r.time||'',
-    reserveGuests:r.guests||1,
-    name:r.name||'Guest'
-  };
-  const key=orderId.replace(/[.#$\[\]]/g,'_');
-  _db.ref('bmm_orders/'+key).set(order);
-
-  showToast('✅ Confirmed – '+(r.name||'Guest')+' · '+r.guests+' guests – order sent to kitchen');
-  renderReservations();
+  // Open table picker so staff assigns table at confirmation time
+  _tpickOrderId='RESV:'+id;
+  _selAssignTable=null;
+  document.getElementById('tpickSub').textContent='Select table for '+(r.name||'Guest')+' · '+(r.guests||1)+' guests';
+  document.getElementById('tpickConfirmBtn').textContent='CONFIRM TABLE';
+  document.getElementById('tpickConfirmBtn').disabled=true;
+  const grid=document.getElementById('tpickGrid');
+  grid.innerHTML='';
+  for(let t=1;t<=10;t++){
+    const btn=document.createElement('div');
+    btn.className='tpc';
+    btn.id='tpc'+t;
+    btn.innerHTML='<div class="tpc-num">'+t+'</div><div class="tpc-lbl">TABLE</div>';
+    btn.onclick=(()=>{const n=t;return()=>selAssignTbl(n);})();
+    grid.appendChild(btn);
+  }
+  document.getElementById('tpickBg').classList.add('on');
 }
 
 function rejectReservation(id){
