@@ -793,8 +793,13 @@ function markTablePaid(){
   saveOrders(orders);
   
   // Mark reservation as paid if reserve order
-  tableOrders.filter(o=>o.isReserve&&o.reserveId).forEach(o=>{
-    _db.ref('bmm_reservations/'+o.reserveId+'/status').set('paid');
+  tableOrders.filter(o=>o.isReserve).forEach(o=>{
+    if(o.reserveId){
+      _db.ref('bmm_reservations/'+o.reserveId+'/status').set('paid');
+    } else {
+      const m=Object.entries(_reservationsCache).find(([id,r])=>r.status==='confirmed'&&(r.name||'Guest')===(o.reserveName||o.name||'Guest')&&r.assignedTable===o.table);
+      if(m)_db.ref('bmm_reservations/'+m[0]+'/status').set('paid');
+    }
   });
   
   closeTdPopBtn();
