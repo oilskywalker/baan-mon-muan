@@ -898,7 +898,16 @@ function confirmAssignTable(){
     closeTpick();
     closeTdPopBtn();
     showToast('✅ Table '+_selAssignTable+' · '+(r.name||'Guest')+' confirmed → order sent to kitchen');
-    renderReservations();
+    // Switch straight to NEW tab so the reserve order is immediately visible
+    filter='pending';
+    document.querySelectorAll('.stab').forEach(s=>s.classList.remove('on'));
+    const _nb=document.querySelector('.stab[onclick*=\"pending\"]');
+    if(_nb)_nb.classList.add('on');
+    const _rb=document.getElementById('resBoard');if(_rb)_rb.style.display='none';
+    const _fb=document.getElementById('resvFBar');if(_fb)_fb.style.display='none';
+    document.getElementById('board').style.display='grid';
+    const _vb=document.getElementById('vbar');if(_vb)_vb.style.display='';
+    render();
     return;
   }
   // ── Payment mode ──
