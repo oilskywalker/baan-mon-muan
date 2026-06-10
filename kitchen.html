@@ -356,11 +356,15 @@ _db.ref('bmm_orders').on('value', snap => {
   _ordersCache = newOrders;
   if(hasNew){
     playBell();
-    if(filter!=='pending'&&filter!=='reserve'){
+    if(filter!=='pending'){
       filter='pending';
       document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
       const nb=document.querySelector('.stab[onclick*=\"pending\"]');
       if(nb)nb.classList.add('on');
+      const rb=document.getElementById('resBoard');if(rb)rb.style.display='none';
+      const fb=document.getElementById('resvFBar');if(fb)fb.style.display='none';
+      document.getElementById('board').style.display='grid';
+      const vb=document.getElementById('vbar');if(vb)vb.style.display='';
     }
   }
   render();
