@@ -64,7 +64,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .ch-tbl{background:rgba(201,168,76,.12);border:1px solid var(--b);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--dim);white-space:nowrap}
 .ch-tbl b{color:var(--gold);font-family:'Cinzel';font-size:13px}
 .ch-time{font-size:11px;color:var(--dim);margin-left:auto;white-space:nowrap}
-.ch-right{display:flex;flex-direction:column;align-items:flex-end;gap:3py}
+.ch-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
 .pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
 .pill-pending{background:rgba(232,168,76,.15);color:var(--pending);border:1px solid rgba(232,168,76,.4)}
 .pill-preparing{background:rgba(76,168,232,.15);color:var(--preparing);border:1px solid rgba(76,168,232,.4)}
@@ -130,7 +130,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .tcard-top{display:flex;align-items:center;gap:8px}
 .tcard-num{font-family:'Cinzel';font-size:18px;color:var(--gold-l);flex-shrink:0}
 .tcard-lbl{font-size:9px;color:var(--dim);letter-spacing:2px;flex-shrink:0}
-.tcard-orders{font-size:11px;color:var(--dim);margin-left:auto;white-space:nowrap;flex-shrink:0}
+.tcard-orders{font-size:11px;color:var(--dim);margin-left:auto;white-space:nowrax;flex-shrink:0}
 .tcard-status{display:flex;gap:4px;flex-wrap:wrap}
 .ts-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 /* Item preview list */
@@ -924,4 +924,18 @@ function confirmReservation(id){
   if(!r) return;
   _db.ref('bmm_reservations/'+id+'/status').set('confirmed');
   const now=new Date();
-  const ts=now.g
+  const ts=now.getTime();
+  showToast('✅ Confirmed – '+(r.name||'Guest')+' · '+r.guests+' guests');
+  renderReservations();
+}
+
+function rejectReservation(id){
+  const r=_reservationsCache[id];
+  if(!r) return;
+  _db.ref('bmm_reservations/'+id+'/status').set('rejected');
+  showToast('✕ Declined – '+(r.name||'Guest'));
+  renderReservations();
+}
+</script>
+</body>
+    </html>
