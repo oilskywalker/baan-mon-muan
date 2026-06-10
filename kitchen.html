@@ -447,6 +447,7 @@ function render(){
 
   const cnt={all:0,current:0,pending:0,preparing:0,ready:0,served:0,paid:0};
   tod.forEach(o=>{
+    if(o.isReserve&&o.status==='paid')return;
     cnt.all++;
     if(cnt[o.status]!==undefined)cnt[o.status]++;
     if(o.status==='preparing'||o.status==='ready'||o.status==='served')cnt.current++;
@@ -484,8 +485,9 @@ function renderOrders(tod){
   if(vbar) vbar.style.display='';
   const pri={pending:0,preparing:1,ready:2,served:3,paid:4};
   const list=(
-    filter==='all'?tod:
+    filter==='all'?tod.filter(o=>!(o.isReserve&&o.status==='paid')):
     filter==='current'?tod.filter(o=>o.status==='preparing'||o.status==='ready'||o.status==='served'):
+    filter==='paid'?tod.filter(o=>o.status==='paid'&&!o.isReserve):
     tod.filter(o=>o.status===filter)
   ).sort((a,b)=>pri[a.status]-pri[b.status]||new Date(a.time)-new Date(b.time));
 
@@ -990,7 +992,7 @@ function renderReservations(){
     return;
   }
   resBoard.innerHTML = entries.map(([id, r]) => {
-    const statusLabel = {pending:'⏳ Pending', confirmed:'✅ Confirmed', rejected:'❌ Declined'}[r.status] || r.status;
+    const statusLabel = {pending:'⏳ Pending', confirmed:'✅ Confirmed', rejected:'❌ Declined', paid:'💰 Paid'}[r.status] || r.status;
     const dateStr = r.date ? r.date.split('-').reverse().join('/') : '–';
     const RPREVIEW = 3;
     const allItems = r.items || [];
@@ -1018,6 +1020,7 @@ function renderReservations(){
         <span><span class="lbl">🕐 Time</span>${r.time||'–'}</span>
         <span><span class="lbl">👥 Guests</span>${r.guests||'–'} ${r.guests==='1'?'person':'people'}</span>
       </div>
+      ${(()=>{if(r.status!=='confirmed')return '';const ko=_ordersCache.find(o=>o.isReserve&&(o.reserveId===id||(o.reserveName===r.name&&o.table===r.assignedTable)));if(!ko)return '';const sl={pending:'🟡 Pending',preparing:'🔵 Preparing',ready:'🟢 Ready',served:'✅ Served',paid:'💰 Paid'}[ko.status]||ko.status;return '<div style="margin:4px 0 2px;padding:5px 10px;background:rgba(201,168,76,.12);border-radius:6px;font-size:12px;color:var(--gold);letter-spacing:.5px">🍽 Order: '+sl+'</div>';})()}
       ${itemsHtml}
       ${noteHtml}
       <div style="font-size:11px;color:var(--dim);text-align:right;margin-top:2px">Tap for details & actions ›</div>
