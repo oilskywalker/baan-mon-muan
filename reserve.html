@@ -145,6 +145,8 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
 .s3-key{font-size:12px;color:var(--dim);letter-spacing:.5px}
 .s3-val{font-size:13px;color:var(--text);font-weight:600;text-align:right;max-width:65%}
 .s3-ref{font-size:10px;color:rgba(154,138,96,.5);letter-spacing:1px;text-align:center;margin-top:4px}
+.s3-new-btn{margin-top:20px;background:none;border:1px solid rgba(154,138,96,.4);color:rgba(154,138,96,.7);padding:10px 24px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Cinzel';letter-spacing:1px;display:block;width:100%}
+.s3-new-btn:hover{border-color:#C9A84C;color:#C9A84C}
 </style>
 </head>
 <body>
@@ -296,6 +298,7 @@ body{min-height:100%;background:var(--black);color:var(--text);font-family:'Sara
 
     <div class="s3-card" id="s3Summary"></div>
     <div class="s3-ref" id="s3Ref"></div>
+    <button class="s3-new-btn" onclick="localStorage.removeItem('bmmResId');location.reload();">↩ New Reservation</button>
   </div>
 </div>
 
@@ -553,6 +556,7 @@ function submitReservation(noOrder){
   currentResId = ref.key;
   ref.set(reservation)
     .then(()=>{
+      localStorage.setItem('bmmResId', currentResId);
       showStep(3);
       renderS3Summary(reservation);
       watchStatus(currentResId);
@@ -636,6 +640,16 @@ _db.ref('bmm_outofstock').on('value', snap=>{
 // ── BOOT ─────────────────────────────────────────────────
 initDateTime();
 updateCartUI();
+(function(){
+  const saved=localStorage.getItem('bmmResId');
+  if(!saved)return;
+  currentResId=saved;
+  _db.ref('bmm_reservations/'+saved).once('value').then(snap=>{
+    const r=snap.val();
+    if(r){showStep(3);renderS3Summary(r);watchStatus(saved);}
+    else{localStorage.removeItem('bmmResId');}
+  });
+})();
 </script>
 </body>
 </html>
