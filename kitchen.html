@@ -983,7 +983,38 @@ function confirmReservation(id){
   const r=_reservationsCache[id];
   if(!r) return;
   _db.ref('bmm_reservations/'+id+'/status').set('confirmed');
-  showToast('✅ Confirmed – '+(r.name||'Guest')+' · '+r.guests+' guests');
+
+  // Create a kitchen order so pre-ordered items appear on the board
+  const now=new Date();
+  const uid=String(Date.now()).slice(-5);
+  const orderId='RSV'+now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+uid;
+  const order={
+    id:orderId,
+    table:0,
+    status:'pending',
+    time:now.toISOString(),
+    timeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),
+    items:(r.items||[]).map(i=>({
+      name:i.name,
+      nameTh:i.nameTh||i.name,
+      qty:i.qty||1,
+      price:i.price||0,
+      itemId:i.itemId||i.name,
+      displayLabel:[i.sweet,i.temp].filter(Boolean).join(' · ')||'',
+      cancelled:false
+    })),
+    note:r.note||'',
+    isReserve:true,
+    reserveName:r.name||'Guest',
+    reserveDate:r.date||'',
+    reserveTime:r.time||'',
+    reserveGuests:r.guests||1,
+    name:r.name||'Guest'
+  };
+  const key=orderId.replace(/[.#$\[\]]/g,'_');
+  _db.ref('bmm_orders/'+key).set(order);
+
+  showToast('✅ Confirmed – '+(r.name||'Guest')+' · '+r.guests+' guests – order sent to kitchen');
   renderReservations();
 }
 
