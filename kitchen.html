@@ -827,7 +827,7 @@ function confirmAssignTable(){
     const resId=_tpickOrderId.slice(5);
     const r=_reservationsCache[resId];
     if(!r){closeTpick();return;}
-    _db.ref('bmm_reservations/'+resId+'/status').set('confirmed');
+    _db.ref('bmm_reservations/'+resId).update({status:'confirmed',assignedTable:_selAssignTable});
     const now=new Date();
     const uid=String(Date.now()).slice(-5);
     const orderId='RSV'+now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+uid;
