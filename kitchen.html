@@ -354,7 +354,15 @@ _db.ref('bmm_orders').on('value', snap => {
   const hasNew = newOrders.some(o => o.status === 'pending' && !_prevOrderIds.has(o.id));
   _prevOrderIds = new Set(newOrders.map(o => o.id));
   _ordersCache = newOrders;
-  if(hasNew) playBell();
+  if(hasNew){
+    playBell();
+    if(filter!=='pending'&&filter!=='reserve'){
+      filter='pending';
+      document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+      const nb=document.querySelector('.stab[onclick*=\"pending\"]');
+      if(nb)nb.classList.add('on');
+    }
+  }
   render();
 });
 _db.ref('bmm_sales').on('value', snap => {
