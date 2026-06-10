@@ -130,7 +130,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 .tcard-top{display:flex;align-items:center;gap:8px}
 .tcard-num{font-family:'Cinzel';font-size:18px;color:var(--gold-l);flex-shrink:0}
 .tcard-lbl{font-size:9px;color:var(--dim);letter-spacing:2px;flex-shrink:0}
-.tcard-orders{font-size:11px;color:var(--dim);margin-left:auto;white-space:nowrax;flex-shrink:0}
+.tcard-orders{font-size:11px;color:var(--dim);margin-left:auto;white-space:nowrap;flex-shrink:0}
 .tcard-status{display:flex;gap:4px;flex-wrap:wrap}
 .ts-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 /* Item preview list */
@@ -246,7 +246,7 @@ body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;
 </div>
 
 <div class="stbar">
-  <button class="stab on" onclick="setF('current',this)">⚡ CURRENT ORDER <span class="sbadge" id="b_current">0</span></button>
+  <button class="stab on" onclick="setF('surrent',this)">⚡ CURRENT ORDER <span class="sbadge" id="b_current">0</span></button>
   <button class="stab" onclick="setF('pending',this)">🔴 NEW <span class="sbadge" id="b_pending">0</span></button>
   <button class="stab" onclick="setF('preparing',this)">🔵 PREPARING <span class="sbadge" id="b_preparing">0</span></button>
   <button class="stab" onclick="setF('ready',this)">🟢 READY <span class="sbadge" id="b_ready">0</span></button>
@@ -312,6 +312,8 @@ let bellOn=true;
 let lastPendingCount=0;
 let viewMode='orders'; // 'orders' or 'tables'
 let activeTdTable=null;
+let _tpickOrderId=null;
+let _selAssignTable=null;
 
 // ── FIREBASE CONFIG (fill in your project values) ──
 const FIREBASE_CONFIG = {
@@ -782,6 +784,72 @@ function markTablePaid(){
   showToast(tblLabel+' paid ✓  ฿'+total);
 }
 
+// ── TABLE ASSIGN PICKER ──
+function assignTableAndCheckout(orderId){
+  _tpickOrderId=orderId;
+  _selAssignTable=null;
+  const o=loadOrders().find(x=>x.id===orderId);
+  document.getElementById('tpickSub').textContent=
+    o ? 'Order '+orderId+(o.name?' · '+o.name:'') : 'Select the table for this order';
+  // Build 5×2 grid for tables 1–10
+  const grid=document.getElementById('tpickGrid');
+  grid.innerHTML='';
+  for(let t=1;t<=10;t++){
+    const btn=document.createElement('div');
+    btn.className='tpc';
+    btn.id='tpc'+t;
+    btn.innerHTML='<div class="tpc-num">'+t+'</div><div class="tpc-lbl">TABLE</div>';
+    btn.onclick=()=>selAssignTbl(t);
+    grid.appendChild(btn);
+  }
+  document.getElementById('tpickConfirmBtn').disabled=true;
+  document.getElementById('tpickBg').classList.add('on');
+}
+
+function selAssignTbl(t){
+  _selAssignTable=t;
+  document.querySelectorAll('.tpc').forEach(el=>el.classList.remove('sel'));
+  const el=document.getElementById('tpc'+t);
+  if(el)el.classList.add('sel');
+  document.getElementById('tpickConfirmBtn').disabled=false;
+}
+
+function closeTpick(){
+  document.getElementById('tpickBg').classList.remove('on');
+  _tpickOrderId=null;
+  _selAssignTable=null;
+}
+
+function confirmAssignTable(){
+  if(!_tpickOrderId||!_selAssignTable)return;
+  const orders=loadOrders();
+  const o=orders.find(x=>x.id===_tpickOrderId);
+  if(!o){closeTpick();return;}
+  // Assign table and mark paid
+  o.table=_selAssignTable;
+  o.status='paid';
+  // Record sale
+  const now=new Date();
+  const sales=loadSales();
+  const total=(o.items||[]).filter(i=>!i.cancelled).reduce((s,i)=>s+i.price*i.qty,0);
+  const saleRecord={
+    id:'PAY'+now.getFullYear().toString().slice(-2)+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+String(sales.length+1).padStart(3,'0'),
+    table:_selAssignTable,
+    orders:[o.id],
+    items:(o.items||[]).filter(i=>!i.cancelled),
+    total,
+    paidAt:now.toISOString(),
+    paidTimeStr:now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})
+  };
+  sales.push(saleRecord);
+  saveSales(sales);
+  saveOrders(orders);
+  closeTpick();
+  closeTdPopBtn();
+  render();
+  showToast('✅ Table '+_selAssignTable+' assigned & paid ฿'+total);
+}
+
 function showToast(msg){
   let t=document.getElementById('kitchenToast');
   if(!t){t=document.createElement('div');t.id='kitchenToast';t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(50px);background:var(--dark3);border:1px solid var(--b2);color:var(--gold-l);padding:10px 20px;border-radius:8px;font-size:13px;transition:transform .3s;z-index:999;pointer-events:none;white-space:nowrap';document.body.appendChild(t);}
@@ -884,47 +952,37 @@ function openResPop(id){
     ? '<button class="rcard-confirm-btn" style="flex:1;padding:12px" onclick="confirmReservation(\''+id+'\');closeTdPopBtn()">✅ Confirm Reservation</button>'
       +'<button class="rcard-reject-btn" style="flex:1;padding:12px" onclick="rejectReservation(\''+id+'\');closeTdPopBtn()">✕ Decline</button>'
     : '';
-
-  document.getElementById('tdpopTitle').textContent = r.name+' · '+r.guests+' guests  ['+statusLabel+']';
-  const body = document.getElementById('tdpopBody');
-  body.innerHTML = '';
-  const div = document.createElement('div');
-  div.className = 'tdpop-order';
-  div.innerHTML =
-    '<div class="tdpop-oh"><span style="font-size:12px;color:var(--dim)">📅 '+dateStr+'  🕐 '+(r.time||'–')+'</span></div>'
-    +'<div style="font-size:12px;color:var(--dim);padding:4px 0 8px">📞 '+(r.phone||'–')+'</div>'
-    +'<div class="tdpop-items">'+itemsHtml+'</div>'
-    + noteHtml
-    +(actionHtml?'<div style="display:flex;gap:8px;padding-top:12px">'+actionHtml+'</div>':'');
-  body.appendChild(div);
-
-  const total = allItems.reduce((s,i)=>s+(i.price||0)*(i.qty||1), 0);
-  document.getElementById('tdpopTotal').textContent = '฿'+total;
-  document.getElementById('tdpopNote').textContent = r.status==='pending' ? 'Confirm or decline' : 'Reservation total';
-  document.getElementById('tdpopPayBtn').style.display = 'none';
+  document.getElementById('tdpopTitle').textContent = r.name || 'Reservation';
+  document.getElementById('tdpopBody').innerHTML =
+    '<div class="tdpop-oh" style="flex-direction:column;align-items:flex-start;gap:4px">'
+    +'<span class="rcard-badge '+r.status+'">'+statusLabel+'</span>'
+    +'<span style="font-size:12px;color:var(--dim)">'+(r.guests||1)+' guests · '+dateStr+(r.time?' · '+r.time:'')+'</span>'
+    +(r.phone?'<span style="font-size:12px;color:var(--dim)">📞 '+r.phone+'</span>':'')
+    +'</div>'
+    +'<div class="tdpop-items" style="padding:12px">'+itemsHtml+'</div>'
+    +noteHtml
+    +(actionHtml?'<div class="rcard-actions" style="padding:10px 12px">'+actionHtml+'</div>':'');
+  document.getElementById('tdpopTotal').textContent='';
+  document.getElementById('tdpopNote').textContent='Reservation';
+  document.getElementById('tdpopPayBtn').style.display='none';
   document.getElementById('tdpopBg').classList.add('on');
 }
 
 function reserveCountdown(dateStr, timeStr){
-  if(!dateStr||!timeStr) return {text:'–',cls:'ok'};
-  const appt=new Date(dateStr+'T'+timeStr+':00');
-  const diffMin=Math.round((appt-Date.now())/60000);
-  if(diffMin<0){
-    const over=Math.abs(diffMin);
-    return{text:'⚠ '+(over<60?over+'m':Math.floor(over/60)+'h '+over%60+'m')+' overdue',cls:'overdue'};
-  }
-  if(diffMin===0)return{text:'⏰ Now!',cls:'urgent'};
-  if(diffMin<30)return{text:'⏰ '+diffMin+'m',cls:'urgent'};
-  const h=Math.floor(diffMin/60),m=diffMin%60;
-  return{text:'⏰ '+(h>0?h+'h ':'')+(m>0?m+'m':''),cls:'ok'};
+  if(!dateStr||!timeStr) return '';
+  const dt = new Date(dateStr+'T'+timeStr);
+  const diff = dt - Date.now();
+  if(isNaN(diff)) return '';
+  if(diff < 0) return '<span style="color:var(--pending);font-size:11px">Overdue</span>';
+  const h = Math.floor(diff/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  return '<span style="color:var(--dim);font-size:11px">in '+(h?h+'h ':'')+m+'m</span>';
 }
 
 function confirmReservation(id){
   const r=_reservationsCache[id];
   if(!r) return;
   _db.ref('bmm_reservations/'+id+'/status').set('confirmed');
-  const now=new Date();
-  const ts=now.getTime();
   showToast('✅ Confirmed – '+(r.name||'Guest')+' · '+r.guests+' guests');
   renderReservations();
 }
@@ -938,4 +996,4 @@ function rejectReservation(id){
 }
 </script>
 </body>
-    </html>
+</html>
