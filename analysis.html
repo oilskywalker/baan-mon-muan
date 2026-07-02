@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baan Mon Muan – Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold-l:#E8C97A;--gold-d:#8B6914;
+  --black:#090700;--dark:#100F06;--dark2:#191508;--dark3:#221D09;
+  --text:#F0E8D0;--dim:#9A8A60;
+  --b:rgba(201,168,76,.2);--b2:rgba(201,168,76,.5);
+  --green:#4CE8A8;--red:#E84C4C;--blue:#4CA8E8;--orange:#E8A84C;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--black);color:var(--text);font-family:'Sarabun',sans-serif;display:flex;flex-direction:column}
+
+.topbar{flex-shrink:0;height:58px;background:var(--dark);border-bottom:2px solid var(--gold-d);display:flex;align-items:center;gap:12px;padding:0 16px}
+.tb-logo{font-family:'Cinzel';font-size:clamp(13px,3vw,18px);font-weight:700;background:linear-gradient(135deg,var(--gold-l),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;flex-shrink:0}
+.tb-sub{font-size:10px;color:var(--dim);letter-spacing:2px;white-space:nowrap}
+.nbtn{background:none;border:1px solid var(--b2);color:var(--gold);padding:6px 12px;border-radius:6px;font-family:'Sarabun';font-size:12px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block;flex-shrink:0}
+.nbtn:active{background:rgba(201,168,76,.15)}
+
+/* TABS */
+.stbar{flex-shrink:0;background:var(--dark2);border-bottom:1px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none}
+.stbar::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;padding:0 16px;height:44px;background:none;border:none;border-bottom:3px solid transparent;color:var(--dim);font-family:'Sarabun';font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:color .15s,border-color .15s}
+.stab.on{color:var(--text);border-bottom-color:var(--gold)}
+
+/* MAIN CONTENT AREA */
+.content{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+
+/* STAT CARDS */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(2,1fr);margin-bottom:20px}
+@media(min-width:700px){.cards{grid-template-columns:repeat(4,1fr)}}
+.card{background:var(--dark2);border:1px solid var(--b);border-radius:12px;padding:14px 16px}
+.card-lbl{font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+.card-val{font-family:'Cinzel';font-size:clamp(18px,4vw,26px);font-weight:700}
+.card-sub{font-size:11px;color:var(--dim);margin-top:4px}
+.card.positive .card-val{color:var(--green)}
+.card.negative .card-val{color:var(--red)}
+.card.revenue .card-val{color:var(--gold-l)}
+.card.cost .card-val{color:var(--orange)}
+
+/* SECTION */
+.section{background:var(--dark2);border:1px solid var(--b);border-radius:12px;padding:16px;margin-bottom:16px}
+.section-title{font-family:'Cinzel';font-size:14px;color:var(--gold-l);letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title span{font-size:12px;color:var(--dim);font-family:'Sarabun';letter-spacing:0;font-weight:400}
+
+/* TABLE */
+.atbl{width:100%;border-collapse:collapse;font-size:12px}
+.atbl th{text-align:left;padding:8px 10px;font-size:10px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--b);font-family:'Sarabun';font-weight:600;white-space:nowrap;cursor:pointer}
+.atbl th:hover{color:var(--gold)}
+.atbl td{padding:9px 10px;border-bottom:1px solid rgba(201,168,76,.06);vertical-align:middle}
+.atbl tr:last-child td{border-bottom:none}
+.atbl tr:hover td{background:rgba(201,168,76,.04)}
+.atbl .num{font-family:'Cinzel';text-align:right}
+.atbl .name-col{font-size:13px;color:var(--text)}
+.atbl .name-th{font-size:10px;color:var(--dim)}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.5px;white-space:nowrap}
+.badge-star{background:rgba(201,168,76,.2);color:var(--gold);border:1px solid rgba(201,168,76,.4)}
+.badge-good{background:rgba(76,232,168,.15);color:var(--green);border:1px solid rgba(76,232,168,.3)}
+.badge-warn{background:rgba(232,168,76,.15);color:var(--orange);border:1px solid rgba(232,168,76,.3)}
+.badge-danger{background:rgba(232,76,76,.15);color:var(--red);border:1px solid rgba(232,76,76,.3)}
+.badge-info{background:rgba(76,168,232,.15);color:var(--blue);border:1px solid rgba(76,168,232,.3)}
+
+/* MARGIN BAR */
+.mbar-wrap{display:flex;align-items:center;gap:8px}
+.mbar{flex:1;height:6px;background:rgba(201,168,76,.1);border-radius:3px;overflow:hidden;min-width:50px}
+.mbar-fill{height:100%;border-radius:3px;transition:width .3s}
+.mbar-pct{font-family:'Cinzel';font-size:11px;min-width:36px;text-align:right;white-space:nowrap}
+
+/* RECOMMENDATION CARDS */
+.rec-grid{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:700px){.rec-grid{grid-template-columns:repeat(2,1fr)}}
+.rec-card{background:var(--dark3);border:1px solid var(--b);border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.rec-icon{font-size:22px;flex-shrink:0;line-height:1}
+.rec-body{flex:1;min-width:0}
+.rec-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.rec-text{font-size:12px;color:var(--dim);line-height:1.5}
+.rec-card.priority-star{border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.06)}
+.rec-card.priority-critical{border-color:rgba(232,76,76,.4);background:rgba(232,76,76,.05)}
+.rec-card.priority-urgent{border-color:rgba(232,168,76,.4);background:rgba(232,168,76,.05)}
+.rec-card.priority-opportunity{border-color:rgba(76,168,232,.4);background:rgba(76,168,232,.05)}
+.rec-card.priority-good{border-color:rgba(76,232,168,.3);background:rgba(76,232,168,.04)}
+
+/* SETUP FORM */
+.form-grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:600px){.form-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.form-grid{grid-template-columns:repeat(3,1fr)}}
+.fgroup{display:flex;flex-direction:column;gap:6px}
+.flbl{font-size:11px;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
+.finput{background:var(--dark3);border:1px solid var(--b);color:var(--text);padding:9px 12px;border-radius:8px;font-family:'Sarabun';font-size:14px;width:100%;outline:none;transition:border-color .15s}
+.finput:focus{border-color:var(--gold)}
+.finput::placeholder{color:var(--dim);opacity:.5}
+.fsave{background:linear-gradient(135deg,var(--gold-d),var(--gold));color:var(--black);border:none;padding:10px 28px;border-radius:8px;font-family:'Sarabun';font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
+.fsave:active{opacity:.85}
+.total-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--b);margin-top:8px}
+.total-lbl{font-size:13px;color:var(--dim)}
+.total-val{font-family:'Cinzel';font-size:18px;color:var(--gold-l)}
+
+/* MENU COST TABLE */
+.mcost-row{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(201,168,76,.06)}
+.mcost-row:last-child{border:none}
+.mcost-name{font-size:13px;color:var(--text)}
+.mcost-price{font-family:'Cinzel';font-size:12px;color:var(--dim);text-align:right;white-space:nowrap}
+.mcost-pct{font-size:11px;text-align:right;white-space:nowrap;min-width:52px}
+.mcost-input{background:var(--dark3);border:1px solid var(--b);color:var(--text);padding:6px 10px;border-radius:6px;font-family:'Sarabun';font-size:13px;width:90px;text-align:right;outline:none}
+.mcost-input:focus{border-color:var(--gold)}
+
+/* SUSTAINABILITY */
+.sustain-box{background:var(--dark3);border:1px solid var(--b);border-radius:10px;padding:16px;text-align:center}
+.sustain-big{font-family:'Cinzel';font-size:clamp(24px,6vw,40px);font-weight:700;margin:8px 0}
+.sustain-lbl{font-size:12px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.sustain-note{font-size:13px;color:var(--dim);margin-top:8px;line-height:1.6}
+
+/* PROJECTION GRID */
+.proj-grid{display:grid;gap:10px;grid-template-columns:repeat(3,1fr);margin-top:12px}
+.proj-card{background:var(--dark3);border:1px solid var(--b);border-radius:8px;padding:12px;text-align:center}
+.proj-val{font-family:'Cinzel';font-size:17px;color:var(--gold-l)}
+.proj-lbl{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+
+/* HISTORY CHART */
+.chart-wrap{overflow-x:auto;padding-bottom:8px}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:120px;min-width:max-content;padding:0 4px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;width:28px}
+.bar-fill{width:20px;border-radius:3px 3px 0 0;min-height:2px;transition:height .3s}
+.bar-lbl{font-size:9px;color:var(--dim);white-space:nowrap;transform:rotate(-45deg);transform-origin:top right;margin-top:2px}
+.bar-val{font-size:9px;color:var(--dim);white-space:nowrap}
+
+/* SORT ARROW */
+.sort-arrow{font-size:9px;margin-left:3px;opacity:.5}
+.sort-arrow.active{opacity:1;color:var(--gold)}
+
+/* PERIOD TOGGLE */
+.period-btns{display:flex;gap:6px;margin-bottom:14px}
+.pbtn{background:none;border:1px solid var(--b);color:var(--dim);padding:5px 14px;border-radius:20px;font-size:12px;font-family:'Sarabun';cursor:pointer}
+.pbtn.on{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold-l)}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;color:var(--dim)}
+.empty-ico{font-size:40px;margin-bottom:12px;opacity:.3}
+.empty-txt{font-size:14px;letter-spacing:.5px}
+
+/* TOAST */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--dark3);border:1px solid var(--b2);color:var(--gold-l);padding:10px 22px;border-radius:8px;font-size:13px;transition:transform .3s;z-index:999;pointer-events:none;white-space:nowrap}
+#toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="tb-logo">BAAN MON MUAN</div>
+    <div class="tb-sub">ANALYSIS</div>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+    <a href="kitchen.html" class="nbtn">Kitchen</a>
+    <a href="index.html" class="nbtn">Menu</a>
+  </div>
+</div>
+
+<div class="stbar">
+  <button class="stab on" onclick="setTab('analysis',this)">📊 Analysis</button>
+  <button class="stab" onclick="setTab('setup',this)">⚙️ Fixed Costs</button>
+  <button class="stab" onclick="setTab('menu',this)">🥘 Menu Costs</button>
+  <button class="stab" onclick="setTab('history',this)">📈 History</button>
+</div>
+
+<!-- ══════════════ ANALYSIS TAB ══════════════ -->
+<div class="content" id="tab-analysis">
+
+  <div class="period-btns">
+    <button class="pbtn on" onclick="setPeriod('today',this)">Today</button>
+    <button class="pbtn" onclick="setPeriod('week',this)">This Week</button>
+    <button class="pbtn" onclick="setPeriod('month',this)">This Month</button>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="cards" id="summaryCards">
+    <div class="card revenue"><div class="card-lbl">Revenue</div><div class="card-val" id="cardRevenue">฿0</div><div class="card-sub" id="cardOrders">0 transactions</div></div>
+    <div class="card cost"><div class="card-lbl">Material Cost</div><div class="card-val" id="cardMaterial">฿0</div><div class="card-sub" id="cardMaterialPct">–% of revenue</div></div>
+    <div class="card cost"><div class="card-lbl">Fixed Cost</div><div class="card-val" id="cardFixed">฿0</div><div class="card-sub" id="cardFixedDays">per day</div></div>
+    <div class="card" id="cardMarginCard"><div class="card-lbl">Net Margin</div><div class="card-val" id="cardMargin">฿0</div><div class="card-sub" id="cardMarginPct">–% margin</div></div>
+  </div>
+
+  <!-- Menu Performance Table -->
+  <div class="section">
+    <div class="section-title">🏆 Menu Performance <span id="perfPeriodLabel">— today</span></div>
+    <div style="overflow-x:auto">
+      <table class="atbl" id="perfTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable('rank')">#</th>
+            <th onclick="sortTable('name')">Item</th>
+            <th onclick="sortTable('qty')" style="text-align:right">Qty <span class="sort-arrow active" id="sa-qty">▼</span></th>
+            <th onclick="sortTable('revenue')" style="text-align:right">Revenue <span class="sort-arrow" id="sa-revenue"></span></th>
+            <th onclick="sortTable('margin')" style="text-align:right">Gross Margin <span class="sort-arrow" id="sa-margin"></span></th>
+            <th onclick="sortTable('pct')" style="text-align:right">Margin % <span class="sort-arrow" id="sa-pct"></span></th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody id="perfBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="section">
+    <div class="section-title">🤖 Smart Recommendations</div>
+    <div class="rec-grid" id="recGrid">
+      <div class="empty-state"><div class="empty-ico">💡</div><div class="empty-txt">Set menu material costs to unlock recommendations</div></div>
+    </div>
+  </div>
+
+  <!-- Monthly Projection + Sustainability -->
+  <div style="display:grid;gap:16px;grid-template-columns:1fr" id="projSection">
+
+    <div class="section">
+      <div class="section-title">📅 Monthly Projection</div>
+      <div class="proj-grid">
+        <div class="proj-card"><div class="proj-val" id="projAvgDaily">฿0</div><div class="proj-lbl">Avg Daily Margin</div></div>
+        <div class="proj-card"><div class="proj-val" id="projMonthly">฿0</div><div class="proj-lbl">Estimated Monthly</div></div>
+        <div class="proj-card"><div class="proj-val" id="projDaysData">0</div><div class="proj-lbl">Days of Data</div></div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--dim);line-height:1.7" id="projNote"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">🏥 Sustainability</div>
+      <div id="sustainBox"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════ SETUP TAB ══════════════ -->
+<div class="content" id="tab-setup" style="display:none">
+
+  <div class="section">
+    <div class="section-title">🏠 Fixed Daily Costs <span>(filled in ฿/day)</span></div>
+    <div class="form-grid">
+      <div class="fgroup"><label class="flbl">Rent / Month (auto ÷30)</label><input class="finput" id="fc-rent-month" type="number" placeholder="e.g. 15000" oninput="updateRentDay()"><label class="flbl" style="margin-top:4px">= Per Day: <span id="rentDayPreview" style="color:var(--gold)">฿0</span></label></div>
+      <div class="fgroup"><label class="flbl">Electricity (฿/day)</label><input class="finput" id="fc-electric" type="number" placeholder="e.g. 200"></div>
+      <div class="fgroup"><label class="flbl">Water (฿/day)</label><input class="finput" id="fc-water" type="number" placeholder="e.g. 30"></div>
+      <div class="fgroup"><label class="flbl">Internet (฿/month ÷30)</label><input class="finput" id="fc-internet-month" type="number" placeholder="e.g. 600" oninput="updateInternetDay()"><label class="flbl" style="margin-top:4px">= Per Day: <span id="internetDayPreview" style="color:var(--gold)">฿0</span></label></div>
+      <div class="fgroup"><label class="flbl">Employee Cost (฿/day)</label><input class="finput" id="fc-employee" type="number" placeholder="e.g. 800"></div>
+      <div class="fgroup"><label class="flbl">Other (฿/day)</label><input class="finput" id="fc-other" type="number" placeholder="e.g. 50"></div>
+    </div>
+    <div class="total-row">
+      <span class="total-lbl">Total Fixed Cost / Day</span>
+      <span class="total-val" id="fixedTotal">฿0</span>
+    </div>
+    <div style="margin-top:4px;font-size:11px;color:var(--dim)">This is subtracted from gross margin to get net daily profit.</div>
+    <button class="fsave" onclick="saveFixedCosts()">💾 Save Fixed Costs</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💰 Cash Reserve <span>(optional — for sustainability estimate)</span></div>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr">
+      <div class="fgroup">
+        <label class="flbl">Current Cash Reserve (฿)</label>
+        <input class="finput" id="fc-reserve" type="number" placeholder="e.g. 50000">
+      </div>
+      <div class="fgroup">
+        <label class="flbl">Target Monthly Profit (฿)</label>
+        <input class="finput" id="fc-target" type="number" placeholder="e.g. 30000">
+      </div>
+    </div>
+    <button class="fsave" onclick="saveFixedCosts()">💾 Save</button>
+  </div>
+
+</div>
+
+<!-- ══════════════ MENU COSTS TAB ══════════════ -->
+<div class="content" id="tab-menu" style="display:none">
+
+  <div class="section">
+    <div class="section-title">🥘 Material Cost per Item <span>— set ingredient cost for each menu item</span></div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:14px">Items are auto-detected from your order history. Enter the material/ingredient cost per serving.</div>
+    <div id="menuCostList">
+      <div class="empty-state"><div class="empty-ico">🍽️</div><div class="empty-txt">No order history found yet</div></div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="fsave" onclick="saveMenuCosts()">💾 Save All Costs</button>
+      <button class="nbtn" onclick="refreshMenuItems()" style="padding:10px 18px">⟳ Refresh Items</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ HISTORY TAB ══════════════ -->
+<div class="content" id="tab-history" style="display:none">
+
+  <div class="section">
+    <div class="section-title">📈 Daily Margin History <span id="histDaysLabel"></span></div>
+    <div class="chart-wrap"><div class="chart-bars" id="histChart"></div></div>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--dim)">
+      <span><span style="color:var(--green)">■</span> Profit day</span>
+      <span><span style="color:var(--red)">■</span> Loss day</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Daily Records</div>
+    <div style="overflow-x:auto">
+      <table class="atbl" id="histTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th style="text-align:right">Revenue</th>
+            <th style="text-align:right">Material</th>
+            <th style="text-align:right">Fixed Cost</th>
+            <th style="text-align:right">Net Margin</th>
+            <th style="text-align:right">Orders</th>
+          </tr>
+        </thead>
+        <tbody id="histBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;align-items:center">
+      <button class="nbtn" onclick="recordToday(true)">📌 Record Today Manually</button>
+      <span style="font-size:11px;color:var(--dim)">Today's figures are auto-recorded on page load</span>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+// ── FIREBASE ──
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDkyydLHfUmZukZsWVbZ343aeYIGk54XCg",
+  authDomain: "baan-mon-muan-f4ad5.firebaseapp.com",
+  databaseURL: "https://baan-mon-muan-f4ad5-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "baan-mon-muan-f4ad5",
+  storageBucket: "baan-mon-muan-f4ad5.appspot.com",
+  messagingSenderId: "731587450487",
+  appId: "1:731587450487:web:d47e30f298a95e5dd4d872"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const _db = firebase.database();
+
+// ── STATE ──
+let _sales = [];
+let _fixedCosts = { rentMonth: 0, electric: 0, water: 0, internetMonth: 0, employee: 0, other: 0, reserve: 0, target: 0 };
+let _materialCosts = {}; // { itemName: cost }
+let _dailyMargins = {}; // { 'YYYY-MM-DD': {...} }
+let _period = 'today';
+let _sortKey = 'qty';
+let _sortDir = -1; // -1 = desc
+let _currentTab = 'analysis';
+
+// ── COMPUTED ──
+function fixedPerDay() {
+  const f = _fixedCosts;
+  return (f.rentMonth || 0) / 30
+    + (f.electric || 0)
+    + (f.water || 0)
+    + (f.internetMonth || 0) / 30
+    + (f.employee || 0)
+    + (f.other || 0);
+}
+
+// ── FIREBASE LISTENERS ──
+_db.ref('bmm_sales').on('value', snap => {
+  _sales = snap.val() ? Object.values(snap.val()) : [];
+  if (_currentTab === 'analysis') renderAnalysis();
+});
+_db.ref('bmm_analysis_fixed').on('value', snap => {
+  _fixedCosts = snap.val() || { rentMonth: 0, electric: 0, water: 0, internetMonth: 0, employee: 0, other: 0, reserve: 0, target: 0 };
+  populateFixedForm();
+  updateFixedTotal();
+  if (_currentTab === 'analysis') renderAnalysis();
+});
+_db.ref('bmm_material_costs').on('value', snap => {
+  _materialCosts = snap.val() || {};
+  if (_currentTab === 'menu') renderMenuCostList();
+  if (_currentTab === 'analysis') renderAnalysis();
+});
+_db.ref('bmm_daily_margins').on('value', snap => {
+  _dailyMargins = snap.val() || {};
+  if (_currentTab === 'history') renderHistory();
+  renderProjection();
+});
+
+// ── TAB ──
+function setTab(tab, el) {
+  _currentTab = tab;
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = '';
+  if (tab === 'analysis') renderAnalysis();
+  if (tab === 'menu') renderMenuCostList();
+  if (tab === 'history') renderHistory();
+  if (tab === 'setup') { populateFixedForm(); updateFixedTotal(); }
+}
+
+// ── PERIOD ──
+function setPeriod(p, el) {
+  _period = p;
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderAnalysis();
+}
+
+// ── FILTER SALES BY PERIOD ──
+function getSalesForPeriod() {
+  const now = new Date();
+  return _sales.filter(s => {
+    const d = new Date(s.paidAt);
+    if (_period === 'today') return d.toDateString() === now.toDateString();
+    if (_period === 'week') {
+      const weekAgo = new Date(now); weekAgo.setDate(now.getDate() - 6);
+      return d >= weekAgo;
+    }
+    if (_period === 'month') {
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }
+    return true;
+  });
+}
+
+// ── MENU STATS FROM SALES ──
+function buildMenuStats(sales) {
+  const map = {};
+  sales.forEach(s => {
+    (s.items || []).forEach(it => {
+      if (it.cancelled) return;
+      const key = it.name;
+      if (!map[key]) map[key] = { name: it.name, nameTh: it.nameTh || '', qty: 0, revenue: 0, price: it.price };
+      map[key].qty += (it.qty || 1);
+      map[key].revenue += it.price * (it.qty || 1);
+      map[key].price = it.price; // keep last known price
+    });
+  });
+  return Object.values(map).map(item => {
+    const mc = _materialCosts[item.name];
+    const hasCost = mc !== undefined && mc !== null && mc !== '';
+    const matCostPerItem = hasCost ? parseFloat(mc) : null;
+    const grossMargin = hasCost ? item.revenue - matCostPerItem * item.qty : null;
+    const grossMarginPct = hasCost && item.revenue > 0 ? grossMargin / item.revenue * 100 : null;
+    return { ...item, hasCost, matCostPerItem, grossMargin, grossMarginPct };
+  });
+}
+
+// ── RENDER ANALYSIS ──
+function renderAnalysis() {
+  const sales = getSalesForPeriod();
+  const periodDays = _period === 'today' ? 1 : _period === 'week' ? 7 : 30;
+  const revenue = sales.reduce((s, o) => s + (o.total || 0), 0);
+  const menuStats = buildMenuStats(sales);
+
+  // Material cost total (only items that have cost set)
+  const matCostTotal = menuStats.reduce((s, m) => s + (m.grossMargin !== null ? (m.revenue - m.grossMargin) : 0), 0);
+  const hasAnyCost = menuStats.some(m => m.hasCost);
+  const fixedDay = fixedPerDay();
+  const fixedForPeriod = fixedDay * periodDays;
+  const netMargin = hasAnyCost ? (revenue - matCostTotal - fixedForPeriod) : null;
+  const periodLabel = { today: 'today', week: 'this week', month: 'this month' }[_period];
+
+  // Cards
+  document.getElementById('cardRevenue').textContent = '฿' + fmt(revenue);
+  document.getElementById('cardOrders').textContent = sales.length + ' transactions';
+  document.getElementById('cardMaterial').textContent = hasAnyCost ? '฿' + fmt(matCostTotal) : 'Set costs';
+  document.getElementById('cardMaterialPct').textContent = hasAnyCost && revenue > 0 ? (matCostTotal / revenue * 100).toFixed(1) + '% of revenue' : '—';
+  document.getElementById('cardFixed').textContent = '฿' + fmt(Math.round(fixedForPeriod));
+  document.getElementById('cardFixedDays').textContent = fixedDay > 0 ? '฿' + fmt(Math.round(fixedDay)) + '/day × ' + periodDays + ' days' : 'Not set';
+  document.getElementById('cardMargin').textContent = netMargin !== null ? '฿' + fmt(Math.round(netMargin)) : '—';
+  document.getElementById('cardMarginPct').textContent = netMargin !== null && revenue > 0 ? (netMargin / revenue * 100).toFixed(1) + '% margin' : hasAnyCost ? '—' : 'Set costs first';
+  const mc = document.getElementById('cardMarginCard');
+  mc.className = 'card ' + (netMargin === null ? '' : netMargin >= 0 ? 'positive' : 'negative');
+  document.getElementById('perfPeriodLabel').textContent = '— ' + periodLabel;
+
+  // Performance table
+  renderPerfTable(menuStats, revenue);
+
+  // Recommendations
+  renderRecommendations(menuStats);
+
+  // Projection
+  renderProjection();
+
+  // Sustainability
+  renderSustainability(netMargin, periodDays, revenue, matCostTotal, fixedForPeriod);
+
+  // Auto-record today
+  if (_period === 'today' && revenue > 0) recordToday(false);
+}
+
+// ── PERFORMANCE TABLE ──
+let _tableData = [];
+function renderPerfTable(menuStats, totalRevenue) {
+  _tableData = [...menuStats];
+  sortAndRenderTable();
+}
+
+function sortTable(key) {
+  if (_sortKey === key) { _sortDir *= -1; }
+  else { _sortKey = key; _sortDir = -1; }
+  // Update arrows
+  ['qty','revenue','margin','pct','name','rank'].forEach(k => {
+    const el = document.getElementById('sa-' + k);
+    if (el) el.textContent = '';
+  });
+  const arrow = document.getElementById('sa-' + key);
+  if (arrow) { arrow.textContent = _sortDir === -1 ? '▼' : '▲'; arrow.className = 'sort-arrow active'; }
+  sortAndRenderTable();
+}
+
+function sortAndRenderTable() {
+  const data = [..._tableData].sort((a, b) => {
+    let va, vb;
+    if (_sortKey === 'qty') { va = a.qty; vb = b.qty; }
+    else if (_sortKey === 'revenue') { va = a.revenue; vb = b.revenue; }
+    else if (_sortKey === 'margin') { va = a.grossMargin ?? -99999; vb = b.grossMargin ?? -99999; }
+    else if (_sortKey === 'pct') { va = a.grossMarginPct ?? -99999; vb = b.grossMarginPct ?? -99999; }
+    else if (_sortKey === 'name') { va = a.name; vb = b.name; return _sortDir * va.localeCompare(vb); }
+    else { va = a.qty; vb = b.qty; }
+    return _sortDir * (va - vb);
+  });
+
+  const tbody = document.getElementById('perfBody');
+  tbody.innerHTML = '';
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--dim)">No orders in this period</td></tr>';
+    return;
+  }
+
+  data.forEach((item, i) => {
+    const pct = item.grossMarginPct;
+    const { badge, barColor } = ratingInfo(item);
+    const barW = pct !== null ? Math.max(2, Math.min(100, pct)) : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="num" style="color:var(--dim)">${i + 1}</td>
+      <td><div class="name-col">${item.name}</div><div class="name-th">${item.nameTh}</div></td>
+      <td class="num">${item.qty}</td>
+      <td class="num">฿${fmt(item.revenue)}</td>
+      <td class="num">${item.grossMargin !== null ? '฿' + fmt(Math.round(item.grossMargin)) : '<span style="color:var(--dim)">—</span>'}</td>
+      <td>
+        ${pct !== null ? `<div class="mbar-wrap">
+          <div class="mbar"><div class="mbar-fill" style="width:${barW}%;background:${barColor}"></div></div>
+          <div class="mbar-pct" style="color:${barColor}">${pct.toFixed(0)}%</div>
+        </div>` : '<span style="color:var(--dim);font-size:11px">No cost set</span>'}
+      </td>
+      <td>${badge}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function ratingInfo(item) {
+  const pct = item.grossMarginPct;
+  if (pct === null) return { badge: '<span class="badge badge-info">No Data</span>', barColor: 'var(--dim)' };
+  if (pct >= 60) return { badge: '<span class="badge badge-star">⭐ Star</span>', barColor: 'var(--green)' };
+  if (pct >= 40) return { badge: '<span class="badge badge-good">✅ Good</span>', barColor: 'var(--green)' };
+  if (pct >= 25) return { badge: '<span class="badge badge-warn">⚠️ Thin</span>', barColor: 'var(--orange)' };
+  return { badge: '<span class="badge badge-danger">🚨 Critical</span>', barColor: 'var(--red)' };
+}
+
+// ── RECOMMENDATIONS ──
+function renderRecommendations(menuStats) {
+  const withCost = menuStats.filter(m => m.hasCost);
+  const grid = document.getElementById('recGrid');
+  if (!withCost.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-ico">💡</div><div class="empty-txt">Set menu material costs in the 🥘 Menu Costs tab to unlock recommendations</div></div>';
+    return;
+  }
+
+  const avgQty = withCost.reduce((s, m) => s + m.qty, 0) / withCost.length;
+  const recs = withCost.map(item => generateRec(item, avgQty)).sort((a, b) => {
+    const order = { critical: 0, urgent: 1, opportunity: 2, star: 3, good: 4, normal: 5, review: 6 };
+    return (order[a.priority] ?? 5) - (order[b.priority] ?? 5);
+  });
+
+  grid.innerHTML = recs.map(r => `
+    <div class="rec-card priority-${r.priority}">
+      <div class="rec-icon">${r.icon}</div>
+      <div class="rec-body">
+        <div class="rec-name">${r.name}</div>
+        <div class="rec-text">${r.text}</div>
+      </div>
+    </div>`).join('');
+}
+
+function generateRec(item, avgQty) {
+  const { name, qty, revenue, grossMarginPct, matCostPerItem, price } = item;
+  const pct = grossMarginPct;
+  const suggestIncrease = Math.max(5, Math.round(price * 0.10 / 5) * 5);
+  const suggestDecrease = Math.max(5, Math.round(price * 0.10 / 5) * 5);
+
+  if (pct < 15) return {
+    name, icon: '🚨', priority: 'critical',
+    text: `Margin is only ${pct.toFixed(0)}% — barely covering ingredient cost (฿${matCostPerItem}/serve). Increase price by at least ฿${suggestIncrease * 2} or renegotiate ingredient cost urgently.`
+  };
+  if (pct < 25 && qty >= avgQty * 0.8) return {
+    name, icon: '⚠️', priority: 'urgent',
+    text: `Popular (${qty} orders) but thin margin (${pct.toFixed(0)}%). Small price increase of ฿${suggestIncrease} could add ฿${suggestIncrease * qty} extra monthly. Customers already love it — they'll absorb a small rise.`
+  };
+  if (pct < 25) return {
+    name, icon: '⚠️', priority: 'urgent',
+    text: `Very low margin (${pct.toFixed(0)}%). Consider raising price by ฿${suggestIncrease} or reducing portion size. Current profit per serve: ฿${((price - matCostPerItem) || 0).toFixed(0)}.`
+  };
+  if (pct >= 65 && qty < avgQty * 0.5) return {
+    name, icon: '💎', priority: 'opportunity',
+    text: `Excellent margin (${pct.toFixed(0)}%) but low orders (${qty}). Try reducing price by ฿${suggestDecrease} to attract more customers. Even at lower price, profit remains strong.`
+  };
+  if (pct >= 65 && qty >= avgQty) return {
+    name, icon: '⭐', priority: 'star',
+    text: `Star item! High margin (${pct.toFixed(0)}%) and popular (${qty} orders). Promote it prominently on the menu. Consider pairing with low-margin items.`
+  };
+  if (qty < avgQty * 0.3 && pct < 35) return {
+    name, icon: '🗑️', priority: 'review',
+    text: `Low orders (${qty}) and low margin (${pct.toFixed(0)}%). Consider removing from menu or a complete reprice. Resources better spent on star items.`
+  };
+  if (pct >= 50 && qty >= avgQty) return {
+    name, icon: '✅', priority: 'good',
+    text: `Great balance — good margin (${pct.toFixed(0)}%) and solid orders (${qty}). Maintain current pricing. Could try a small price increase (฿${suggestIncrease}) to test elasticity.`
+  };
+  if (pct >= 50) return {
+    name, icon: '💡', priority: 'opportunity',
+    text: `Good margin (${pct.toFixed(0)}%) but lower orders (${qty}). Try promoting this item or featuring it as a daily special to boost volume.`
+  };
+  return {
+    name, icon: '📊', priority: 'normal',
+    text: `Average performance (${pct.toFixed(0)}% margin, ${qty} orders). Monitor monthly trends. If orders drop, consider a promotion bundle or combo deal.`
+  };
+}
+
+// ── PROJECTION ──
+function renderProjection() {
+  const entries = Object.entries(_dailyMargins).sort(([a], [b]) => a.localeCompare(b)).slice(-30);
+  const n = entries.length;
+  if (!n) {
+    document.getElementById('projAvgDaily').textContent = '—';
+    document.getElementById('projMonthly').textContent = '—';
+    document.getElementById('projDaysData').textContent = '0';
+    document.getElementById('projNote').textContent = 'Record daily margins to see projections. Sales data is auto-recorded when this page is open.';
+    return;
+  }
+  const totalMargin = entries.reduce((s, [, d]) => s + (d.margin || 0), 0);
+  const avgDaily = totalMargin / n;
+  const monthly = avgDaily * 30;
+  document.getElementById('projAvgDaily').textContent = (avgDaily >= 0 ? '+' : '') + '฿' + fmt(Math.round(avgDaily));
+  document.getElementById('projAvgDaily').style.color = avgDaily >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('projMonthly').textContent = (monthly >= 0 ? '+' : '') + '฿' + fmt(Math.round(monthly));
+  document.getElementById('projMonthly').style.color = monthly >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('projDaysData').textContent = n;
+  const profitDays = entries.filter(([, d]) => d.margin >= 0).length;
+  document.getElementById('projNote').textContent =
+    `Based on last ${n} days of data. ${profitDays} profit days, ${n - profitDays} loss days. ` +
+    (monthly >= 0
+      ? `At this rate, estimated monthly net profit: ฿${fmt(Math.round(monthly))}.`
+      : `Currently running at a monthly loss of ฿${fmt(Math.abs(Math.round(monthly)))}. Review menu pricing and fixed costs.`);
+}
+
+// ── SUSTAINABILITY ──
+function renderSustainability(netMargin, periodDays, revenue, matCost, fixedCost) {
+  const box = document.getElementById('sustainBox');
+  const fixedDay = fixedPerDay();
+  const entries = Object.entries(_dailyMargins);
+  const avgDailyMargin = entries.length
+    ? entries.reduce((s, [, d]) => s + (d.margin || 0), 0) / entries.length
+    : null;
+
+  const reserve = _fixedCosts.reserve || 0;
+  const target = _fixedCosts.target || 0;
+
+  if (!fixedDay && !revenue) {
+    box.innerHTML = `<div class="sustain-box"><div class="sustain-lbl">Setup required</div><div class="sustain-note">Enter your fixed costs and run some sales to see sustainability analysis.</div></div>`;
+    return;
+  }
+
+  let html = '';
+  if (avgDailyMargin !== null) {
+    if (avgDailyMargin >= 0) {
+      const monthlyProfit = avgDailyMargin * 30;
+      html = `<div class="sustain-box">
+        <div class="sustain-lbl">Monthly Estimate</div>
+        <div class="sustain-big" style="color:var(--green)">+฿${fmt(Math.round(monthlyProfit))}</div>
+        <div class="sustain-note">✅ Restaurant is profitable at an average of <strong style="color:var(--green)">฿${fmt(Math.round(avgDailyMargin))}/day</strong> net margin.<br>
+        ${reserve > 0 ? `Cash reserve of ฿${fmt(reserve)} will grow, not shrink.` : ''}
+        ${target > 0 ? monthlyProfit >= target ? `🎯 Monthly target of ฿${fmt(target)} is being met!` : `⚠️ Monthly target of ฿${fmt(target)} not yet reached. Need ฿${fmt(Math.round(target - monthlyProfit))} more per month.` : ''}</div>
+      </div>`;
+    } else {
+      const deficit = Math.abs(avgDailyMargin);
+      const daysLeft = reserve > 0 ? Math.floor(reserve / deficit) : 0;
+      html = `<div class="sustain-box">
+        <div class="sustain-lbl">Situation</div>
+        <div class="sustain-big" style="color:var(--red)">⚠️ Loss</div>
+        <div class="sustain-note">Currently losing <strong style="color:var(--red)">฿${fmt(Math.round(deficit))}/day</strong> after all costs.<br>
+        Monthly deficit: <strong>฿${fmt(Math.round(deficit * 30))}</strong><br>
+        ${reserve > 0 ? `Cash reserve of ฿${fmt(reserve)} will last approximately <strong>${daysLeft} days</strong> (${Math.floor(daysLeft / 30)} months ${daysLeft % 30} days).` : 'Enter your cash reserve in Fixed Costs to see how long you can sustain.'}<br><br>
+        💡 To break even, you need to increase daily margin by ฿${fmt(Math.round(deficit))}. Check recommendations above.</div>
+      </div>`;
+    }
+  } else if (revenue > 0 && netMargin !== null) {
+    const dailyNet = netMargin / periodDays;
+    html = `<div class="sustain-box">
+      <div class="sustain-lbl">Today's Net</div>
+      <div class="sustain-big" style="color:${dailyNet >= 0 ? 'var(--green)' : 'var(--red)'}">
+        ${dailyNet >= 0 ? '+' : ''}฿${fmt(Math.round(dailyNet))}
+      </div>
+      <div class="sustain-note">Based on today only. Build up more daily records to get accurate projections.<br>
+      Fixed cost per day: ฿${fmt(Math.round(fixedDay))}</div>
+    </div>`;
+  } else {
+    html = `<div class="sustain-box"><div class="sustain-lbl">Waiting for data</div><div class="sustain-note">Set menu material costs and fixed costs, then sales data will show sustainability analysis here.</div></div>`;
+  }
+  box.innerHTML = html;
+}
+
+// ── RECORD TODAY ──
+function recordToday(manual) {
+  const todaySales = _sales.filter(s => new Date(s.paidAt).toDateString() === new Date().toDateString());
+  if (!todaySales.length && !manual) return;
+
+  const dateKey = toDateKey(new Date());
+  const revenue = todaySales.reduce((s, o) => s + (o.total || 0), 0);
+  const menuStats = buildMenuStats(todaySales);
+  const matCost = menuStats.reduce((s, m) => s + (m.grossMargin !== null ? (m.revenue - m.grossMargin) : 0), 0);
+  const fixedDay = fixedPerDay();
+  const margin = revenue - matCost - fixedDay;
+  const orders = todaySales.length;
+
+  _db.ref('bmm_daily_margins/' + dateKey).set({ revenue, materialCost: matCost, fixedCost: fixedDay, margin, orders, updatedAt: Date.now() });
+  if (manual) showToast('Today recorded ✓');
+}
+
+function toDateKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+// ── FIXED COSTS FORM ──
+function populateFixedForm() {
+  const f = _fixedCosts;
+  setVal('fc-rent-month', f.rentMonth);
+  setVal('fc-electric', f.electric);
+  setVal('fc-water', f.water);
+  setVal('fc-internet-month', f.internetMonth);
+  setVal('fc-employee', f.employee);
+  setVal('fc-other', f.other);
+  setVal('fc-reserve', f.reserve);
+  setVal('fc-target', f.target);
+  updateRentDay(); updateInternetDay(); updateFixedTotal();
+}
+function setVal(id, v) { const el = document.getElementById(id); if (el && v) el.value = v; }
+function updateRentDay() {
+  const v = parseFloat(document.getElementById('fc-rent-month').value) || 0;
+  document.getElementById('rentDayPreview').textContent = '฿' + (v / 30).toFixed(0);
+  updateFixedTotal();
+}
+function updateInternetDay() {
+  const v = parseFloat(document.getElementById('fc-internet-month').value) || 0;
+  document.getElementById('internetDayPreview').textContent = '฿' + (v / 30).toFixed(0);
+  updateFixedTotal();
+}
+function updateFixedTotal() {
+  const rent = (parseFloat(document.getElementById('fc-rent-month')?.value) || 0) / 30;
+  const elec = parseFloat(document.getElementById('fc-electric')?.value) || 0;
+  const water = parseFloat(document.getElementById('fc-water')?.value) || 0;
+  const inet = (parseFloat(document.getElementById('fc-internet-month')?.value) || 0) / 30;
+  const emp = parseFloat(document.getElementById('fc-employee')?.value) || 0;
+  const oth = parseFloat(document.getElementById('fc-other')?.value) || 0;
+  const total = rent + elec + water + inet + emp + oth;
+  document.getElementById('fixedTotal').textContent = '฿' + fmt(Math.round(total));
+}
+function saveFixedCosts() {
+  const data = {
+    rentMonth: parseFloat(document.getElementById('fc-rent-month').value) || 0,
+    electric: parseFloat(document.getElementById('fc-electric').value) || 0,
+    water: parseFloat(document.getElementById('fc-water').value) || 0,
+    internetMonth: parseFloat(document.getElementById('fc-internet-month').value) || 0,
+    employee: parseFloat(document.getElementById('fc-employee').value) || 0,
+    other: parseFloat(document.getElementById('fc-other').value) || 0,
+    reserve: parseFloat(document.getElementById('fc-reserve').value) || 0,
+    target: parseFloat(document.getElementById('fc-target').value) || 0,
+  };
+  _db.ref('bmm_analysis_fixed').set(data);
+  showToast('Fixed costs saved ✓');
+}
+
+// ── MENU COST LIST ──
+function getAllMenuItems() {
+  const map = {};
+  _sales.forEach(s => {
+    (s.items || []).forEach(it => {
+      if (!it.cancelled && it.name) map[it.name] = { name: it.name, nameTh: it.nameTh || '', price: it.price };
+    });
+  });
+  return Object.values(map).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function renderMenuCostList() {
+  const items = getAllMenuItems();
+  const list = document.getElementById('menuCostList');
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-ico">🍽️</div><div class="empty-txt">No order history found yet</div></div>';
+    return;
+  }
+  list.innerHTML = items.map(item => {
+    const mc = _materialCosts[item.name] !== undefined ? _materialCosts[item.name] : '';
+    const pct = mc !== '' && item.price > 0 ? ((item.price - parseFloat(mc)) / item.price * 100).toFixed(0) : null;
+    const pctColor = pct === null ? 'var(--dim)' : pct >= 50 ? 'var(--green)' : pct >= 25 ? 'var(--orange)' : 'var(--red)';
+    return `<div class="mcost-row">
+      <div><div class="mcost-name">${item.name}</div><div class="name-th" style="font-size:11px;color:var(--dim)">${item.nameTh}</div></div>
+      <div class="mcost-price">Sell: ฿${item.price}</div>
+      <input class="mcost-input" type="number" id="mc_${CSS.escape(item.name)}" placeholder="฿ cost" value="${mc}"
+        oninput="previewMargin(this, ${item.price})" title="Material/ingredient cost per serving">
+      <div class="mcost-pct" style="color:${pctColor}" id="mcp_${CSS.escape(item.name)}">${pct !== null ? pct + '% margin' : '—'}</div>
+    </div>`;
+  }).join('');
+}
+
+function previewMargin(input, sellPrice) {
+  const cost = parseFloat(input.value);
+  const id = input.id.replace('mc_', 'mcp_');
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (isNaN(cost) || cost < 0) { el.textContent = '—'; el.style.color = 'var(--dim)'; return; }
+  const pct = ((sellPrice - cost) / sellPrice * 100).toFixed(0);
+  el.textContent = pct + '% margin';
+  el.style.color = pct >= 50 ? 'var(--green)' : pct >= 25 ? 'var(--orange)' : 'var(--red)';
+}
+
+function saveMenuCosts() {
+  const items = getAllMenuItems();
+  const data = {};
+  items.forEach(item => {
+    const el = document.getElementById('mc_' + CSS.escape(item.name));
+    if (el && el.value !== '') data[item.name] = parseFloat(el.value) || 0;
+  });
+  _db.ref('bmm_material_costs').set(data);
+  showToast('Menu costs saved ✓');
+}
+
+function refreshMenuItems() {
+  renderMenuCostList();
+  showToast('Menu items refreshed');
+}
+
+// ── HISTORY ──
+function renderHistory() {
+  const entries = Object.entries(_dailyMargins).sort(([a], [b]) => b.lo#aleCompare(a)).slice(0, 60);
+  document.getElementById('histDaysLabel').textContent = `— ${entries.length} days`;
+
+  // Chart (reverse for chronological)
+  const chartEntries = [...entries].reverse();
+  const maxAbs = Math.max(1, ...chartEntries.map(([, d]) => Math.abs(d.margin || 0)));
+  const chartHtml = chartEntries.map(([date, d]) => {
+    const pct = Math.min(100, Math.abs(d.margin || 0) / maxAbs * 100);
+    const color = (d.margin || 0) >= 0 ? 'var(--green)' : 'var(--red)';
+    const label = date.slice(5); // MM-DD
+    return `<div class="bar-col">
+      <div class="bar-val" style="color:${color};font-size:8px">${(d.margin || 0) >= 0 ? '+' : ''}${Math.round((d.margin || 0) / 1000)}k</div>
+      <div class="bar-fill" style="height:${pct}%;background:${color}"></div>
+      <div class="bar-lbl">${label}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('histChart').innerHTML = chartHtml || '<span style="color:var(--dim);font-size:12px;padding:20px">No data yet</span>';
+
+  // Table
+  const tbody = document.getElementById('histBody');
+  tbody.innerHTML = entries.map(([date, d]) => {
+    const m = d.margin || 0;
+    const color = m >= 0 ? 'var(--green)' : 'var(--red)';
+    return `<tr>
+      <td>${date}</td>
+      <td class="num">฿${fmt(Math.round(d.revenue || 0))}</td>
+      <td class="num" style="color:var(--orange)">฿${fmt(Math.round(d.materialCost || 0))}</td>
+      <td class="num" style="color:var(--dim)">฿${fmt(Math.round(d.fixedCost || 0))}</td>
+      <td class="num" style="color:${color};font-weight:700">${m >= 0 ? '+' : ''}฿${fmt(Math.round(m))}</td>
+      <td class="num">${d.orders || 0}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--dim)">No history yet</td></tr>';
+}
+
+// ── UTILS ──
+function fmt(n) { return Number(n).toLocaleString('th-TH'); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show';
+  setTimeout(() => { t.className = ''; }, 2500);
+}
+
+// ── INIT ──
+// Listen for fixed cost form inputs to update total live
+document.querySelectorAll('#tab-setup .finput').forEach(el => {
+  el.addEventListener('input', updateFixedTotal);
+});
+
+// Auto-run analysis on load
+renderAnalysis();
+</script>
+</body>
+</html>
