@@ -1120,6 +1120,27 @@ function rejectReservation(id){
   showToast('✕ Declined – '+(r.name||'Guest'));
   renderReservations();
 }
+
+function cleanOldReservations(){
+  const now=Date.now();
+  const TWO_DAYS=2*24*60*60*1000;
+  _db.ref('bmm_reservations').once('value').then(snap=>{
+    const data=snap.val()||{};
+    Object.entries(data).forEach(([id,r])=>{
+      let refTime=r.createdAt||0;
+      if(r.date){refTime=new Date(r.date+'T00:00:00').getTime();}
+      if(refTime&&(now-refTime)>TWO_DAYS){
+        _db.ref('bmm_orders').orderByChild('reserveId').equalTo(id).once('value').then(os=>{
+          os.forEach(o=>_db.ref('bmm_orders/'+o.key).remove());
+        });
+        _db.ref('bmm_reservations/'+id).remove();
+      }
+    });
+  });
+}
+cleanOldReservations();
+setInterval(cleanOldReservations,60*60*1000);
+
 </script>
 </body>
 </html>
